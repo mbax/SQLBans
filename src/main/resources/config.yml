@@ -1,0 +1,14 @@
+##
+##   SQLBans
+##
+##   Stuff here
+##
+database:
+  host: localhost
+  port: 3306
+  database: sqlbans
+  auth:
+    username: banana
+    password: guava
+disconnect:
+  banned: Visit our website for unban

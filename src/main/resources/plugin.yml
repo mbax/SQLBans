@@ -1,0 +1,65 @@
+name: SQLBans
+main: org.kitteh.sqlbans.SQLBans
+version: '${project.version}'
+website: http://kitteh.org
+author: mbaxter
+description: SQLBans
+commands:
+  ban:
+    aliases: b
+    description: Ban
+    usage: /ban player [reason]
+    permission: sqlbans.command.ban
+    permission-message: You may not ban
+  kick:
+    aliases: k
+    description: Kick
+    usage: /kick player [reason]
+    permission: sqlbans.command.kick
+    permission-message: You may not kick
+  unban:
+    description: Unban
+    usage: /unban player
+    permission: sqlbans.command.unban
+    permission-message: You may not unban
+permissions:
+  sqlbans.command.ban:
+    description: Ban
+  sqlbans.command.kick:
+    description: Kick
+  sqlbans.command.unban:
+    description: unban
+  sqlbans.command.all:
+    description: All commands
+    children:
+      sqlbans.command.ban: true
+      sqlbans.command.kick: true
+      sqlbans.command.unban: true
+  sqlbans.message.ban.normal:
+    description: See ban messages
+  sqlbans.message.ban.admin:
+    description: See ban messages with admin name. Overrides .normal
+  sqlbans.message.ban.offline:
+    description: See ban messages even if target is offline
+  sqlbans.message.kick.normal:
+    description: See kick messages
+  sqlbans.message.kick.admin:
+    description: See kick messages with admin name. Overrides .normal
+  sqlbans.message.unban.normal:
+    description: See unban messages
+  sqlbans.message.unban.admin:
+    description: See unban messages with admin name. Overrides .normal
+  sqlbans.message.defaults:
+    default: true
+    description: Standard message receiving for normal users
+    children:
+      sqlbans.message.kick.normal: true
+      sqlbans.message.ban.normal: true
+  sqlbans.message.admin:
+    default: op
+    description: Admin message receiving
+    children:
+      sqlbans.message.kick.admin: true
+      sqlbans.message.ban.admin: true
+      sqlbans.message.unban.admin: true
+    
