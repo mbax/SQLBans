@@ -50,8 +50,9 @@ public class SQLBans extends JavaPlugin {
         final String db = config.getString("database.database");
         final String user = config.getString("database.auth.username");
         final String pass = config.getString("database.auth.password");
+        final String tableName = config.getString("database.tablename");
         try {
-            SQLHandler.start(host, port, user, pass, db);
+            SQLHandler.start(host, port, user, pass, db, tableName);
         } catch (final SQLBansException e) {
             this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
             this.getServer().getPluginManager().disablePlugin(this);
