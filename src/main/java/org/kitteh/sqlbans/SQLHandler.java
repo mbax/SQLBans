@@ -46,6 +46,7 @@ public class SQLHandler {
     public static boolean canJoin(String name) throws SQLBansException, SQLException {
         synchronized (SQLHandler.sync) {
             final PreparedStatement banQuery = SQLHandler.instance().connection.prepareStatement("SELECT `id` FROM `" + tableName + "` WHERE `username`=? AND `banned`=1");
+            banQuery.setString(1, name);
             if (banQuery.executeQuery().first()) {
                 return false;
             }
@@ -96,8 +97,7 @@ public class SQLHandler {
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
             tableName = table;
-            final PreparedStatement bansTableExists = this.connection.prepareStatement("SHOW TABLES LIKE \"" + tableName + "\"");
-            final ResultSet bansExists = bansTableExists.executeQuery();
+            final ResultSet bansExists = connection.getMetaData().getTables(null, null, tableName, null);
             if (!bansExists.first()) {
                 String tableCreation =
                 "CREATE TABLE IF NOT EXISTS `" + tableName + "` (" +
@@ -114,6 +114,12 @@ public class SQLHandler {
             }
         } catch (final SQLException e) {
             throw new SQLBansException("SQL fail!", e);
+        }
+    }
+
+    public static void nullifyInstance() {
+        synchronized (SQLHandler.sync) {
+            SQLHandler.instance = null;
         }
     }
 

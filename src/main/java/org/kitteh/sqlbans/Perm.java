@@ -23,6 +23,7 @@ public enum Perm {
     /* Commands */
     COMMAND_BAN,
     COMMAND_KICK,
+    COMMAND_RELOAD,
     COMMAND_UNBAN,
 
     /* Messaging */
@@ -32,6 +33,8 @@ public enum Perm {
 
     MESSAGE_KICK_NORMAL,
     MESSAGE_KICK_ADMIN,
+    
+    MESSAGE_RELOAD,
 
     MESSAGE_UNBAN_NORMAL,
     MESSAGE_UNBAN_ADMIN;

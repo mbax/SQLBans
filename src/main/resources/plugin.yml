@@ -17,6 +17,11 @@ commands:
     usage: /kick player [reason]
     permission: sqlbans.command.kick
     permission-message: You may not kick
+  sqlbansreload:
+    description: Reloads setting, re-initializes the SQL handler
+    usage: /sqlbansreload
+    permission: sqlbans.command.reload
+    permission-message: You may not reload
   unban:
     description: Unban
     usage: /unban player
@@ -27,6 +32,8 @@ permissions:
     description: Ban
   sqlbans.command.kick:
     description: Kick
+  sqlbans.command.reload:
+    description: reload
   sqlbans.command.unban:
     description: unban
   sqlbans.command.all:
@@ -34,6 +41,7 @@ permissions:
     children:
       sqlbans.command.ban: true
       sqlbans.command.kick: true
+      sqlbans.command.reload: true
       sqlbans.command.unban: true
   sqlbans.message.ban.normal:
     description: See ban messages
@@ -45,6 +53,8 @@ permissions:
     description: See kick messages
   sqlbans.message.kick.admin:
     description: See kick messages with admin name. Overrides .normal
+  sqlbans.message.reload:
+    description: See reload messages
   sqlbans.message.unban.normal:
     description: See unban messages
   sqlbans.message.unban.admin:

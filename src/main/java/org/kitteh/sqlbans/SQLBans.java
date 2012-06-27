@@ -23,12 +23,17 @@ import java.util.logging.Level;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerPreLoginEvent.Result;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.kitteh.sqlbans.commands.BanCommand;
+import org.kitteh.sqlbans.commands.KickCommand;
+import org.kitteh.sqlbans.commands.ReloadCommand;
+import org.kitteh.sqlbans.commands.UnbanCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
-public class SQLBans extends JavaPlugin {
+public class SQLBans extends JavaPlugin implements Listener {
     private String banDisconnectMessage;
 
     private HashSet<String> bannedCache;
@@ -43,20 +48,16 @@ public class SQLBans extends JavaPlugin {
         if (!confFile.exists()) {
             this.saveDefaultConfig();
         }
-        final FileConfiguration config = this.getConfig();
-        this.banDisconnectMessage = config.getString("disconnect.banned");
-        final String host = config.getString("database.host");
-        final int port = config.getInt("database.port");
-        final String db = config.getString("database.database");
-        final String user = config.getString("database.auth.username");
-        final String pass = config.getString("database.auth.password");
-        final String tableName = config.getString("database.tablename");
-        try {
-            SQLHandler.start(host, port, user, pass, db, tableName);
-        } catch (final SQLBansException e) {
-            this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
-            this.getServer().getPluginManager().disablePlugin(this);
-        }
+        
+        // Command registration
+        this.getCommand("ban").setExecutor(new BanCommand(this));
+        this.getCommand("kick").setExecutor(new KickCommand(this));
+        this.getCommand("sqlbansreload").setExecutor(new ReloadCommand(this));
+        this.getCommand("unban").setExecutor(new UnbanCommand(this));
+        
+        this.getServer().getPluginManager().registerEvents(this, this);
+
+        this.initializeHandler();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -85,6 +86,24 @@ public class SQLBans extends JavaPlugin {
         } catch (final Exception e) {
             event.disallow(Result.KICK_OTHER, "Connection error: Please retry.");
             this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
+        }
+    }
+    
+    public void initializeHandler() {
+        this.reloadConfig();
+        final FileConfiguration config = this.getConfig();
+        this.banDisconnectMessage = config.getString("disconnect.banned");
+        final String host = config.getString("database.host");
+        final int port = config.getInt("database.port");
+        final String db = config.getString("database.database");
+        final String user = config.getString("database.auth.username");
+        final String pass = config.getString("database.auth.password");
+        final String tableName = config.getString("database.tablename");
+        try {
+            SQLHandler.start(host, port, user, pass, db, tableName);
+        } catch (final SQLBansException e) {
+            this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
+            this.getServer().getPluginManager().disablePlugin(this);
         }
     }
 
