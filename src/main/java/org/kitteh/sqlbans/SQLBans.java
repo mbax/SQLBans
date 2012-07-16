@@ -16,7 +16,10 @@
  */
 package org.kitteh.sqlbans;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.logging.Level;
 
@@ -34,6 +37,8 @@ import org.kitteh.sqlbans.commands.UnbanCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public class SQLBans extends JavaPlugin implements Listener {
+    public static String TABLE_CREATE = null;
+
     private String banDisconnectMessage;
 
     private HashSet<String> bannedCache;
@@ -48,13 +53,26 @@ public class SQLBans extends JavaPlugin implements Listener {
         if (!confFile.exists()) {
             this.saveDefaultConfig();
         }
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
+        StringBuilder builder = new StringBuilder();
+        String next;
+        try {
+            while((next = reader.readLine())!=null) {
+                builder.append(next);
+            }
+        } catch (IOException e) {
+            new SQLBansException("Could not load default table creation text", e).printStackTrace();
+        }
+        TABLE_CREATE = builder.toString();
         
+
         // Command registration
         this.getCommand("ban").setExecutor(new BanCommand(this));
         this.getCommand("kick").setExecutor(new KickCommand(this));
         this.getCommand("sqlbansreload").setExecutor(new ReloadCommand(this));
         this.getCommand("unban").setExecutor(new UnbanCommand(this));
-        
+
         this.getServer().getPluginManager().registerEvents(this, this);
 
         this.initializeHandler();
@@ -88,7 +106,7 @@ public class SQLBans extends JavaPlugin implements Listener {
             this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
         }
     }
-    
+
     public void initializeHandler() {
         this.reloadConfig();
         final FileConfiguration config = this.getConfig();

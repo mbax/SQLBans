@@ -96,24 +96,21 @@ public class SQLHandler {
     private SQLHandler(String host, int port, String user, String pass, String db, String table) throws SQLBansException {
         try {
             this.connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
+        } catch (final Exception e) {
+            throw new SQLBansException("SQL connection failure!", e);
+        }
+        try {
             tableName = table;
             final ResultSet bansExists = connection.getMetaData().getTables(null, null, tableName, null);
             if (!bansExists.first()) {
-                String tableCreation =
-                "CREATE TABLE IF NOT EXISTS `" + tableName + "` (" +
-                "`id` int(11) NOT NULL AUTO_INCREMENT," +
-                "`username` varchar(16) NOT NULL," +
-                "`reason` tinytext NOT NULL," + 
-                "`admin` varchar(16) NOT NULL," + 
-                "`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP," + 
-                "`banned` tinyint(1) NOT NULL DEFAULT '1'," + 
-                "PRIMARY KEY (`id`)," + 
-                "KEY `username` (`username`)" + 
-                ") ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-                this.connection.createStatement().executeUpdate(tableCreation);
+                if(SQLBans.TABLE_CREATE!=null){
+                    this.connection.createStatement().executeUpdate(SQLBans.TABLE_CREATE);
+                } else {
+                    new SQLBansException("You need to create the bans table.");
+                }
             }
-        } catch (final SQLException e) {
-            throw new SQLBansException("SQL fail!", e);
+        } catch (final Exception e) {
+            throw new SQLBansException("SQL failure while checking for table!", e);
         }
     }
 
