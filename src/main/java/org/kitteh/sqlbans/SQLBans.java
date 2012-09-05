@@ -45,6 +45,24 @@ public class SQLBans extends JavaPlugin implements Listener {
 
     private Object bannedCacheSync;
 
+    public void initializeHandler() {
+        this.reloadConfig();
+        final FileConfiguration config = this.getConfig();
+        this.banDisconnectMessage = config.getString("disconnect.banned");
+        final String host = config.getString("database.host");
+        final int port = config.getInt("database.port");
+        final String db = config.getString("database.database");
+        final String user = config.getString("database.auth.username");
+        final String pass = config.getString("database.auth.password");
+        final String tableName = config.getString("database.tablename");
+        try {
+            SQLHandler.start(host, port, user, pass, db, tableName);
+        } catch (final SQLBansException e) {
+            this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
+            this.getServer().getPluginManager().disablePlugin(this);
+        }
+    }
+
     @Override
     public void onEnable() {
         this.bannedCache = new HashSet<String>() {
@@ -56,20 +74,20 @@ public class SQLBans extends JavaPlugin implements Listener {
             }
 
             @Override
-            public boolean remove(Object object) {
+            public boolean contains(Object object) {
                 if (object instanceof String) {
-                    return remove(((String) object).toLowerCase());
+                    return this.contains(((String) object).toLowerCase());
                 } else {
-                    return remove(object);
+                    return this.contains(object);
                 }
             }
 
             @Override
-            public boolean contains(Object object) {
+            public boolean remove(Object object) {
                 if (object instanceof String) {
-                    return contains(((String) object).toLowerCase());
+                    return this.remove(((String) object).toLowerCase());
                 } else {
-                    return contains(object);
+                    return this.remove(object);
                 }
             }
         };
@@ -79,17 +97,17 @@ public class SQLBans extends JavaPlugin implements Listener {
             this.saveDefaultConfig();
         }
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
-        StringBuilder builder = new StringBuilder();
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
+        final StringBuilder builder = new StringBuilder();
         String next;
         try {
             while ((next = reader.readLine()) != null) {
                 builder.append(next);
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             new SQLBansException("Could not load default table creation text", e).printStackTrace();
         }
-        TABLE_CREATE = builder.toString();
+        SQLBans.TABLE_CREATE = builder.toString();
 
         // Command registration
         this.getCommand("ban").setExecutor(new BanCommand(this));
@@ -128,24 +146,6 @@ public class SQLBans extends JavaPlugin implements Listener {
         } catch (final Exception e) {
             event.disallow(Result.KICK_OTHER, "Connection error: Please retry.");
             this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
-        }
-    }
-
-    public void initializeHandler() {
-        this.reloadConfig();
-        final FileConfiguration config = this.getConfig();
-        this.banDisconnectMessage = config.getString("disconnect.banned");
-        final String host = config.getString("database.host");
-        final int port = config.getInt("database.port");
-        final String db = config.getString("database.database");
-        final String user = config.getString("database.auth.username");
-        final String pass = config.getString("database.auth.password");
-        final String tableName = config.getString("database.tablename");
-        try {
-            SQLHandler.start(host, port, user, pass, db, tableName);
-        } catch (final SQLBansException e) {
-            this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
-            this.getServer().getPluginManager().disablePlugin(this);
         }
     }
 

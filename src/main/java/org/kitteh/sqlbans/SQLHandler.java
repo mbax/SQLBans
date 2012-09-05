@@ -32,7 +32,7 @@ public class SQLHandler {
     public static void ban(String user, String reason, String admin) throws SQLBansException {
         synchronized (SQLHandler.sync) {
             try {
-                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("INSERT INTO `" + tableName + "` (`username`, `reason`, `admin`) VALUES (?, ?, ?)");
+                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("INSERT INTO `" + SQLHandler.tableName + "` (`username`, `reason`, `admin`) VALUES (?, ?, ?)");
                 statement.setString(1, user);
                 statement.setString(2, reason);
                 statement.setString(3, admin);
@@ -45,13 +45,19 @@ public class SQLHandler {
 
     public static boolean canJoin(String name) throws SQLBansException, SQLException {
         synchronized (SQLHandler.sync) {
-            final PreparedStatement banQuery = SQLHandler.instance().connection.prepareStatement("SELECT `id` FROM `" + tableName + "` WHERE `username`=? AND `banned`=1");
+            final PreparedStatement banQuery = SQLHandler.instance().connection.prepareStatement("SELECT `id` FROM `" + SQLHandler.tableName + "` WHERE `username`=? AND `banned`=1");
             banQuery.setString(1, name);
             if (banQuery.executeQuery().first()) {
                 return false;
             }
         }
         return true;
+    }
+
+    public static void nullifyInstance() {
+        synchronized (SQLHandler.sync) {
+            SQLHandler.instance = null;
+        }
     }
 
     public static void start(String host, int port, String user, String pass, String db, String table) throws SQLBansException {
@@ -71,7 +77,7 @@ public class SQLHandler {
     public static void unban(String user) throws SQLBansException {
         synchronized (SQLHandler.sync) {
             try {
-                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("UPDATE `" + tableName + "` SET `banned` = 0 WHERE `username` = ?");
+                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("UPDATE `" + SQLHandler.tableName + "` SET `banned` = 0 WHERE `username` = ?");
                 statement.setString(1, user);
                 statement.executeUpdate();
             } catch (final SQLException e) {
@@ -100,10 +106,10 @@ public class SQLHandler {
             throw new SQLBansException("SQL connection failure!", e);
         }
         try {
-            tableName = table;
-            final ResultSet bansExists = connection.getMetaData().getTables(null, null, tableName, null);
+            SQLHandler.tableName = table;
+            final ResultSet bansExists = this.connection.getMetaData().getTables(null, null, SQLHandler.tableName, null);
             if (!bansExists.first()) {
-                if(SQLBans.TABLE_CREATE!=null){
+                if (SQLBans.TABLE_CREATE != null) {
                     this.connection.createStatement().executeUpdate(SQLBans.TABLE_CREATE);
                 } else {
                     new SQLBansException("You need to create the bans table.");
@@ -111,12 +117,6 @@ public class SQLHandler {
             }
         } catch (final Exception e) {
             throw new SQLBansException("SQL failure while checking for table!", e);
-        }
-    }
-
-    public static void nullifyInstance() {
-        synchronized (SQLHandler.sync) {
-            SQLHandler.instance = null;
         }
     }
 

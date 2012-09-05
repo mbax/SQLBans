@@ -33,7 +33,7 @@ public enum Perm {
 
     MESSAGE_KICK_NORMAL,
     MESSAGE_KICK_ADMIN,
-    
+
     MESSAGE_RELOAD,
 
     MESSAGE_UNBAN_NORMAL,

@@ -19,7 +19,7 @@ public class ReloadCommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
-            if (player != null && Perm.MESSAGE_RELOAD.has(player)) {
+            if ((player != null) && Perm.MESSAGE_RELOAD.has(player)) {
                 player.sendMessage(ChatColor.AQUA + sender.getName() + " reloaded SQLBans");
             }
         }
