@@ -36,7 +36,7 @@ public class UnbanCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -62,7 +62,7 @@ public class UnbanCommand implements CommandExecutor {
                     SQLHandler.unban(username);
                 } catch (final Exception e) {
                     UnbanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not unban " + username, e);
-                    Util.queueMessage(UnbanCommand.this.plugin, sender, ChatColor.RED + "[SQLBans] Failed to unban " + username);
+                    Util.queueMessage(UnbanCommand.this.plugin, Perm.MESSAGE_UNBAN_ADMIN.toString(), ChatColor.RED + "[SQLBans] Failed to unban " + username);
                 }
             }
         });

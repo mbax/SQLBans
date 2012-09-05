@@ -36,7 +36,7 @@ public class BanCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -87,7 +87,7 @@ public class BanCommand implements CommandExecutor {
                     SQLHandler.ban(username, reason, admin);
                 } catch (final Exception e) {
                     BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + username, e);
-                    Util.queueMessage(BanCommand.this.plugin, sender, ChatColor.RED + "[SQLBans] Failed to ban " + username);
+                    Util.queueMessage(BanCommand.this.plugin, Perm.MESSAGE_BAN_ADMIN.toString(), ChatColor.RED + "[SQLBans] Failed to ban " + username);
                 }
             }
         });

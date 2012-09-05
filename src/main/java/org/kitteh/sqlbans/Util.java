@@ -16,17 +16,13 @@
  */
 package org.kitteh.sqlbans;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
 
 public class Util {
-    public static void queueMessage(Plugin plugin, final CommandSender sender, final String message) {
-        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+    public static void queueMessage(final Plugin plugin, final String permission, final String message) {
+        plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             public void run() {
-                if (sender != null) {
-                    sender.sendMessage(message);
-                }
+                plugin.getServer().broadcast(message, permission);
             }
         });
     }
