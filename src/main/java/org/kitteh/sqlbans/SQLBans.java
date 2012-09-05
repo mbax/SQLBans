@@ -47,7 +47,32 @@ public class SQLBans extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
-        this.bannedCache = new HashSet<String>();
+        this.bannedCache = new HashSet<String>() {
+            private static final long serialVersionUID = 1337L;
+
+            @Override
+            public boolean add(String string) {
+                return super.add(string.toLowerCase());
+            }
+
+            @Override
+            public boolean remove(Object object) {
+                if (object instanceof String) {
+                    return remove(((String) object).toLowerCase());
+                } else {
+                    return remove(object);
+                }
+            }
+
+            @Override
+            public boolean contains(Object object) {
+                if (object instanceof String) {
+                    return contains(((String) object).toLowerCase());
+                } else {
+                    return contains(object);
+                }
+            }
+        };
         this.bannedCacheSync = new Object();
         final File confFile = new File(this.getDataFolder(), "config.yml");
         if (!confFile.exists()) {
@@ -58,14 +83,13 @@ public class SQLBans extends JavaPlugin implements Listener {
         StringBuilder builder = new StringBuilder();
         String next;
         try {
-            while((next = reader.readLine())!=null) {
+            while ((next = reader.readLine()) != null) {
                 builder.append(next);
             }
         } catch (IOException e) {
             new SQLBansException("Could not load default table creation text", e).printStackTrace();
         }
         TABLE_CREATE = builder.toString();
-        
 
         // Command registration
         this.getCommand("ban").setExecutor(new BanCommand(this));
