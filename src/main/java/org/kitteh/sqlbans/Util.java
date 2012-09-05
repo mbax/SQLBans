@@ -16,7 +16,21 @@
  */
 package org.kitteh.sqlbans;
 
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.Plugin;
+
 public class Util {
+    public static void queueMessage(Plugin plugin, final CommandSender sender, final String message) {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+            public void run() {
+                if (sender != null) {
+                    sender.sendMessage(message);
+                }
+            }
+        });
+    }
+
     public static String separatistsUnite(String[] args, String separator) {
         return Util.separatistsUnite(args, separator, 0, args.length - 1);
     }

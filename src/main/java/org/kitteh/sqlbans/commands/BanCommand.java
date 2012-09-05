@@ -27,7 +27,6 @@ import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLHandler;
 import org.kitteh.sqlbans.Util;
-import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public class BanCommand implements CommandExecutor {
 
@@ -37,7 +36,7 @@ public class BanCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -86,8 +85,9 @@ public class BanCommand implements CommandExecutor {
             public void run() {
                 try {
                     SQLHandler.ban(username, reason, admin);
-                } catch (final SQLBansException e) {
+                } catch (final Exception e) {
                     BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + username, e);
+                    Util.queueMessage(BanCommand.this.plugin, sender, ChatColor.RED + "[SQLBans] Failed to ban " + username);
                 }
             }
         });

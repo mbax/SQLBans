@@ -26,7 +26,7 @@ import org.bukkit.entity.Player;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLHandler;
-import org.kitteh.sqlbans.exceptions.SQLBansException;
+import org.kitteh.sqlbans.Util;
 
 public class UnbanCommand implements CommandExecutor {
 
@@ -36,7 +36,7 @@ public class UnbanCommand implements CommandExecutor {
         this.plugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(final CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -60,8 +60,9 @@ public class UnbanCommand implements CommandExecutor {
             public void run() {
                 try {
                     SQLHandler.unban(username);
-                } catch (final SQLBansException e) {
+                } catch (final Exception e) {
                     UnbanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not unban " + username, e);
+                    Util.queueMessage(UnbanCommand.this.plugin, sender, ChatColor.RED + "[SQLBans] Failed to unban " + username);
                 }
             }
         });

@@ -29,17 +29,13 @@ public class SQLHandler {
     private static Object sync = new Object();
     private static String tableName;
 
-    public static void ban(String user, String reason, String admin) throws SQLBansException {
+    public static void ban(String user, String reason, String admin) throws SQLBansException, SQLException {
         synchronized (SQLHandler.sync) {
-            try {
-                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("INSERT INTO `" + SQLHandler.tableName + "` (`username`, `reason`, `admin`) VALUES (?, ?, ?)");
-                statement.setString(1, user);
-                statement.setString(2, reason);
-                statement.setString(3, admin);
-                statement.executeUpdate();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            }
+            final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("INSERT INTO `" + SQLHandler.tableName + "` (`username`, `reason`, `admin`) VALUES (?, ?, ?)");
+            statement.setString(1, user);
+            statement.setString(2, reason);
+            statement.setString(3, admin);
+            statement.executeUpdate();
         }
     }
 
@@ -74,15 +70,11 @@ public class SQLHandler {
         }
     }
 
-    public static void unban(String user) throws SQLBansException {
+    public static void unban(String user) throws SQLBansException, SQLException {
         synchronized (SQLHandler.sync) {
-            try {
-                final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("UPDATE `" + SQLHandler.tableName + "` SET `banned` = 0 WHERE `username` = ?");
-                statement.setString(1, user);
-                statement.executeUpdate();
-            } catch (final SQLException e) {
-                e.printStackTrace();
-            }
+            final PreparedStatement statement = SQLHandler.instance().connection.prepareStatement("UPDATE `" + SQLHandler.tableName + "` SET `banned` = 0 WHERE `username` = ?");
+            statement.setString(1, user);
+            statement.executeUpdate();
         }
     }
 
