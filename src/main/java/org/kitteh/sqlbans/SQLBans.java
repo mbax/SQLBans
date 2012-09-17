@@ -76,18 +76,18 @@ public class SQLBans extends JavaPlugin implements Listener {
             @Override
             public boolean contains(Object object) {
                 if (object instanceof String) {
-                    return this.contains(((String) object).toLowerCase());
+                    return super.contains(((String) object).toLowerCase());
                 } else {
-                    return this.contains(object);
+                    return super.contains(object);
                 }
             }
 
             @Override
             public boolean remove(Object object) {
                 if (object instanceof String) {
-                    return this.remove(((String) object).toLowerCase());
+                    return super.remove(((String) object).toLowerCase());
                 } else {
-                    return this.remove(object);
+                    return super.remove(object);
                 }
             }
         };
@@ -95,6 +95,8 @@ public class SQLBans extends JavaPlugin implements Listener {
         final File confFile = new File(this.getDataFolder(), "config.yml");
         if (!confFile.exists()) {
             this.saveDefaultConfig();
+            this.getLogger().info("SQLBans config established. Edit the config and restart!");
+            this.getServer().getPluginManager().disablePlugin(this);
         }
 
         final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
