@@ -56,6 +56,7 @@ public class UnbanCommand implements CommandExecutor {
         this.plugin.getServer().getConsoleSender().sendMessage(unbanAdminMessage);
 
         final String username = targetName;
+        this.plugin.unban(username);
         this.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, new Runnable() {
             public void run() {
                 try {
@@ -68,5 +69,4 @@ public class UnbanCommand implements CommandExecutor {
         });
         return true;
     }
-
 }

@@ -151,4 +151,8 @@ public class SQLBans extends JavaPlugin implements Listener {
         }
     }
 
+    public void unban(String name) {
+        this.bannedCache.remove(name);
+    }
+
 }
