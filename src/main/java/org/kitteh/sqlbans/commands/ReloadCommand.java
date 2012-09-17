@@ -23,6 +23,7 @@ public class ReloadCommand implements CommandExecutor {
                 player.sendMessage(ChatColor.AQUA + sender.getName() + " reloaded SQLBans");
             }
         }
+        this.plugin.getLogger().info(sender.getName() + " reloaded SQLBans");
         SQLHandler.nullifyInstance();
         this.plugin.initializeHandler();
         return true;
