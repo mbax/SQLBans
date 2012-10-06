@@ -1,7 +1,9 @@
 ##
 ##   SQLBans
 ##
-##   Stuff here
+##   For kick and ban messages, use && for the color char,
+##     such as &&f for white.
+##     Use %reason% for the reason, %admin% for the kicking admin's name
 ##
 database:
   host: localhost
@@ -10,6 +12,29 @@ database:
   tablename: SQLBans_bans
   auth:
     username: banana
-    password: guava
-disconnect:
-  banned: Visit our website for unban
+    password: pear
+messages:
+  disconnect:
+    rejected: '&&cVisit our website for unban'
+    kicked:
+      noreason: '&&cKicked'
+      reason: '&&cKicked:&&f %reason%'
+    banned:
+      noreason: '&&cBanned.'
+      reason: '&&cBanned:&&f %reason%'
+  ingame:
+    kicked:
+      normal:
+        reason: '&&cKicked %target%: &&f%reason%'
+        noreason: '&&cKicked %target%'
+      admin:
+        reason: '&&c%admin% kicked %target%'
+        noreason: '&&c%admin% kicked %target%: &&f%reason%'
+    banned:
+      normal:
+        reason: '&&cBanned %target%: &&f%reason%'
+        noreason: '&&cBanned %target%'
+      admin:
+        reason: '&&c%admin% banned %target%'
+        noreason: '&&c%admin% banned %target%: &&f%reason%'
+meow: true

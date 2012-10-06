@@ -23,7 +23,9 @@ import java.io.InputStreamReader;
 import java.util.HashSet;
 import java.util.logging.Level;
 
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -35,20 +37,104 @@ import org.kitteh.sqlbans.commands.KickCommand;
 import org.kitteh.sqlbans.commands.ReloadCommand;
 import org.kitteh.sqlbans.commands.UnbanCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
+import org.kitteh.sqlbans.exceptions.SQLBansThreadingException;
 
 public class SQLBans extends JavaPlugin implements Listener {
+    public static class Messages {
+        private static String DISCONNECT_REJECTED;
+        private static String DISCONNECT_KICKED_NOREASON;
+        private static String DISCONNECT_KICKED_REASON;
+        private static String DISCONNECT_BANNED_NOREASON;
+        private static String DISCONNECT_BANNED_REASON;
+        private static String INGAME_KICKED_NORMAL_NOREASON;
+        private static String INGAME_KICKED_NORMAL_REASON;
+        private static String INGAME_KICKED_ADMIN_NOREASON;
+        private static String INGAME_KICKED_ADMIN_REASON;
+        private static String INGAME_BANNED_NORMAL_NOREASON;
+        private static String INGAME_BANNED_NORMAL_REASON;
+        private static String INGAME_BANNED_ADMIN_NOREASON;
+        private static String INGAME_BANNED_ADMIN_REASON;
+
+        public static String getDisconnectBanned(String reason, String admin) {
+            String ret = reason == null ? Messages.DISCONNECT_BANNED_NOREASON : Messages.DISCONNECT_BANNED_REASON.replace("%reason%", reason);
+            return ret.replace("%admin%", admin == null ? "Admin" : admin);
+        }
+
+        public static String getDisconnectKicked(String reason, String admin) {
+            String ret = reason == null ? Messages.DISCONNECT_KICKED_NOREASON : Messages.DISCONNECT_KICKED_REASON.replace("%reason%", reason);
+            return ret.replace("%admin%", admin == null ? "Admin" : admin);
+        }
+
+        public static String getDisconnectRejected() {
+            return Messages.DISCONNECT_REJECTED;
+        }
+
+        public static String getIngameBanned(String target, String reason, String admin, boolean adminmsg) {
+            String ret;
+            if (adminmsg) {
+                ret = reason == null ? Messages.INGAME_BANNED_ADMIN_NOREASON : Messages.INGAME_BANNED_ADMIN_REASON.replace("%reason%", reason);
+            } else {
+                ret = reason == null ? Messages.INGAME_BANNED_NORMAL_NOREASON : Messages.INGAME_BANNED_NORMAL_REASON.replace("%reason%", reason);
+            }
+            return ret.replace("%admin%", admin == null ? "Admin" : admin).replace("%target%", target == null ? "Target" : target);
+        }
+
+        public static String getIngameKicked(String target, String reason, String admin, boolean adminmsg) {
+            String ret;
+            if (adminmsg) {
+                ret = reason == null ? Messages.INGAME_KICKED_ADMIN_NOREASON : Messages.INGAME_KICKED_ADMIN_REASON.replace("%reason%", reason);
+            } else {
+                ret = reason == null ? Messages.INGAME_KICKED_NORMAL_NOREASON : Messages.INGAME_KICKED_NORMAL_REASON.replace("%reason%", reason);
+            }
+            return ret.replace("%admin%", admin == null ? "Admin" : admin).replace("%target%", target == null ? "Target" : target);
+        }
+
+        public static void load(SQLBans plugin) {
+            plugin.checkThread();
+            final FileConfiguration def = YamlConfiguration.loadConfiguration(plugin.getResource("config.yml"));
+            final FileConfiguration config = plugin.getConfig();
+            plugin.getConfig().setDefaults(def);
+            Messages.DISCONNECT_REJECTED = Messages.color(config.getString("messages.disconnect.rejected"));
+            Messages.DISCONNECT_KICKED_NOREASON = Messages.color(config.getString("messages.disconnect.kicked.noreason"));
+            Messages.DISCONNECT_KICKED_REASON = Messages.color(config.getString("messages.disconnect.kicked.reason"));
+            Messages.DISCONNECT_BANNED_NOREASON = Messages.color(config.getString("messages.disconnect.banned.noreason"));
+            Messages.DISCONNECT_BANNED_REASON = Messages.color(config.getString("messages.disconnect.banned.reason"));
+            Messages.INGAME_KICKED_NORMAL_NOREASON = Messages.color(config.getString("messages.ingame.kicked.normal.noreason"));
+            Messages.INGAME_KICKED_NORMAL_REASON = Messages.color(config.getString("messages.ingame.kicked.normal.reason"));
+            Messages.INGAME_KICKED_ADMIN_NOREASON = Messages.color(config.getString("messages.ingame.kicked.admin.noreason"));
+            Messages.INGAME_KICKED_ADMIN_REASON = Messages.color(config.getString("messages.ingame.kicked.admin.reason"));
+            Messages.INGAME_BANNED_NORMAL_NOREASON = Messages.color(config.getString("messages.ingame.banned.normal.noreason"));
+            Messages.INGAME_BANNED_NORMAL_REASON = Messages.color(config.getString("messages.ingame.banned.normal.reason"));
+            Messages.INGAME_BANNED_ADMIN_NOREASON = Messages.color(config.getString("messages.ingame.banned.admin.noreason"));
+            Messages.INGAME_BANNED_ADMIN_REASON = Messages.color(config.getString("messages.ingame.banned.admin.reason"));
+        }
+
+        private static String color(String string) {
+            if (string.endsWith("&&")) {
+                string = string.substring(0, string.length() - 2);
+            }
+            return string.replace("&&", String.valueOf(ChatColor.COLOR_CHAR));
+        }
+    }
+
     public static String TABLE_CREATE = null;
 
-    private String banDisconnectMessage;
+    private Thread mainThread;
 
     private HashSet<String> bannedCache;
 
     private Object bannedCacheSync;
 
+    public void checkThread() {
+        if (!Thread.currentThread().equals(this.mainThread)) {
+            throw new SQLBansThreadingException();
+        }
+    }
+
     public void initializeHandler() {
         this.reloadConfig();
+        SQLBans.Messages.load(this);
         final FileConfiguration config = this.getConfig();
-        this.banDisconnectMessage = config.getString("disconnect.banned");
         final String host = config.getString("database.host");
         final int port = config.getInt("database.port");
         final String db = config.getString("database.database");
@@ -65,6 +151,8 @@ public class SQLBans extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+        this.mainThread = Thread.currentThread();
+
         this.bannedCache = new HashSet<String>() {
             private static final long serialVersionUID = 1337L;
 
@@ -126,13 +214,13 @@ public class SQLBans extends JavaPlugin implements Listener {
     public void onPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
         synchronized (this.bannedCacheSync) {
             if (this.bannedCache.contains(event.getName())) {
-                event.disallow(Result.KICK_BANNED, this.banDisconnectMessage);
+                event.disallow(Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
                 return;
             }
         }
         try {
             if (!SQLHandler.canJoin(event.getName())) {
-                event.disallow(Result.KICK_BANNED, this.banDisconnectMessage);
+                event.disallow(Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
                 synchronized (this.bannedCacheSync) {
                     final String name = event.getName();
                     this.bannedCache.add(name);

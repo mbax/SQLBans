@@ -44,19 +44,11 @@ public class KickCommand implements CommandExecutor {
             sender.sendMessage(ChatColor.RED + "Could not find a player named " + args[0]);
         }
 
-        String reasonbit;
-        final StringBuilder disconnect = new StringBuilder();
-        disconnect.append(ChatColor.RED).append("Kicked");
-        if (args.length > 1) {
-            reasonbit = ChatColor.WHITE + ": " + Util.separatistsUnite(args, " ", 1);
-        } else {
-            reasonbit = ".";
-        }
-        disconnect.append(reasonbit);
+        final String reason = args.length>1?Util.separatistsUnite(args, " ", 1):null;
 
-        final String kick = ChatColor.RED + "Kicked " + target.getName() + reasonbit;
-        final String kickAdmin = ChatColor.RED + sender.getName() + " kicked " + target.getName() + reasonbit;
-        target.kickPlayer(disconnect.toString());
+        final String kick = SQLBans.Messages.getIngameKicked(target.getName(), reason, sender.getName(), false);
+        final String kickAdmin = SQLBans.Messages.getIngameKicked(target.getName(), reason, sender.getName(), true);
+        target.kickPlayer(SQLBans.Messages.getDisconnectBanned(reason, sender.getName()));
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
             if ((player != null) && player.isOnline()) {
                 if (Perm.MESSAGE_KICK_ADMIN.has(player)) {

@@ -41,30 +41,18 @@ public class BanCommand implements CommandExecutor {
             return false;
         }
         String targetName = args[0];
-        String reasonbit;
-        final String reason;
-        final StringBuilder disconnect = new StringBuilder();
-        disconnect.append(ChatColor.RED).append("Banned");
-
-        if (args.length > 1) {
-            reason = Util.separatistsUnite(args, " ", 1);
-            reasonbit = ChatColor.WHITE + ": " + reason;
-        } else {
-            reasonbit = ".";
-            reason = "Banned";
-        }
-        disconnect.append(reasonbit);
+        final String reason = args.length>1?Util.separatistsUnite(args, " ", 1):null;
 
         final Player target = this.plugin.getServer().getPlayer(targetName);
         boolean online = false;
         if ((target != null) && target.isOnline()) {
             targetName = target.getName();
             online = true;
-            target.kickPlayer(disconnect.toString());
+            target.kickPlayer(SQLBans.Messages.getDisconnectKicked(reason, sender.getName()));
         }
 
-        final String banMessage = ChatColor.RED + "Banned " + targetName + reasonbit;
-        final String banAdminMessage = ChatColor.RED + sender.getName() + " banned " + targetName + reasonbit;
+        final String banMessage = SQLBans.Messages.getIngameBanned(target.getName(), reason, sender.getName(), false);
+        final String banAdminMessage = SQLBans.Messages.getIngameBanned(target.getName(), reason, sender.getName(), true);
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
             if ((player != null) && player.isOnline()) {
                 if (online || Perm.MESSAGE_BAN_OFFLINE.has(player)) {
