@@ -25,7 +25,7 @@ public class ReloadCommand implements CommandExecutor {
         }
         this.plugin.getLogger().info(sender.getName() + " reloaded SQLBans");
         SQLHandler.nullifyInstance();
-        this.plugin.initializeHandler();
+        this.plugin.load();
         return true;
     }
 

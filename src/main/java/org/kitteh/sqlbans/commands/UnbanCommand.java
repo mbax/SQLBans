@@ -23,10 +23,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.kitteh.sqlbans.Perm;
-import org.kitteh.sqlbans.SQLBans;
-import org.kitteh.sqlbans.SQLHandler;
-import org.kitteh.sqlbans.Util;
+import org.kitteh.sqlbans.*;
+import org.kitteh.sqlbans.SQLBans.Messages;
 
 public class UnbanCommand implements CommandExecutor {
 
@@ -42,8 +40,8 @@ public class UnbanCommand implements CommandExecutor {
         }
         final String targetName = args[0];
 
-        final String unbanMessage = ChatColor.RED + "Unbanned " + targetName + ".";
-        final String unbanAdminMessage = ChatColor.RED + sender.getName() + " unbanned " + targetName + ".";
+        final String unbanMessage = Messages.getIngameUnbanned(targetName, sender.getName(), false);
+        final String unbanAdminMessage = Messages.getIngameUnbanned(targetName, sender.getName(), true);
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
             if ((player != null) && player.isOnline()) {
                 if (Perm.MESSAGE_UNBAN_ADMIN.has(player)) {
@@ -56,7 +54,7 @@ public class UnbanCommand implements CommandExecutor {
         this.plugin.getServer().getConsoleSender().sendMessage(unbanAdminMessage);
 
         final String username = targetName;
-        this.plugin.unban(username);
+        this.plugin.removeCachedBan(username);
         this.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, new Runnable() {
             public void run() {
                 try {

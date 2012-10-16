@@ -5,6 +5,8 @@
 ##     such as &&f for white.
 ##     Use %reason% for the reason, %admin% for the kicking admin's name
 ##
+##   Track server bans by changing server-name to another name
+##
 database:
   host: localhost
   port: 3306
@@ -13,6 +15,7 @@ database:
   auth:
     username: banana
     password: pear
+server-name: default
 messages:
   disconnect:
     rejected: '&&cVisit our website for unban'
@@ -37,4 +40,7 @@ messages:
       admin:
         reason: '&&c%admin% banned %target%'
         noreason: '&&c%admin% banned %target%: &&f%reason%'
+    unbanned:
+      normal: '&&cUnbanned %target%'
+      admin: '&&c%admin% unbanned %target%'
 meow: true

@@ -54,14 +54,16 @@ public class SQLBans extends JavaPlugin implements Listener {
         private static String INGAME_BANNED_NORMAL_REASON;
         private static String INGAME_BANNED_ADMIN_NOREASON;
         private static String INGAME_BANNED_ADMIN_REASON;
+        private static String INGAME_UNBANNED_NORMAL;
+        private static String INGAME_UNBANNED_ADMIN;
 
         public static String getDisconnectBanned(String reason, String admin) {
-            String ret = reason == null ? Messages.DISCONNECT_BANNED_NOREASON : Messages.DISCONNECT_BANNED_REASON.replace("%reason%", reason);
+            final String ret = reason == null ? Messages.DISCONNECT_BANNED_NOREASON : Messages.DISCONNECT_BANNED_REASON.replace("%reason%", reason);
             return ret.replace("%admin%", admin == null ? "Admin" : admin);
         }
 
         public static String getDisconnectKicked(String reason, String admin) {
-            String ret = reason == null ? Messages.DISCONNECT_KICKED_NOREASON : Messages.DISCONNECT_KICKED_REASON.replace("%reason%", reason);
+            final String ret = reason == null ? Messages.DISCONNECT_KICKED_NOREASON : Messages.DISCONNECT_KICKED_REASON.replace("%reason%", reason);
             return ret.replace("%admin%", admin == null ? "Admin" : admin);
         }
 
@@ -89,6 +91,11 @@ public class SQLBans extends JavaPlugin implements Listener {
             return ret.replace("%admin%", admin == null ? "Admin" : admin).replace("%target%", target == null ? "Target" : target);
         }
 
+        public static String getIngameUnbanned(String target, String admin, boolean adminmsg) {
+            final String ret = adminmsg ? Messages.INGAME_UNBANNED_ADMIN : Messages.INGAME_UNBANNED_NORMAL;
+            return ret.replace("%admin%", admin == null ? "Admin" : admin).replace("%target%", target == null ? "Target" : target);
+        }
+
         public static void load(SQLBans plugin) {
             plugin.checkThread();
             final FileConfiguration def = YamlConfiguration.loadConfiguration(plugin.getResource("config.yml"));
@@ -107,6 +114,8 @@ public class SQLBans extends JavaPlugin implements Listener {
             Messages.INGAME_BANNED_NORMAL_REASON = Messages.color(config.getString("messages.ingame.banned.normal.reason"));
             Messages.INGAME_BANNED_ADMIN_NOREASON = Messages.color(config.getString("messages.ingame.banned.admin.noreason"));
             Messages.INGAME_BANNED_ADMIN_REASON = Messages.color(config.getString("messages.ingame.banned.admin.reason"));
+            Messages.INGAME_UNBANNED_NORMAL = Messages.color(config.getString("messages.ingame.unbanned.normal"));
+            Messages.INGAME_UNBANNED_ADMIN = Messages.color(config.getString("messages.ingame.unbanned.admin"));
         }
 
         private static String color(String string) {
@@ -118,6 +127,12 @@ public class SQLBans extends JavaPlugin implements Listener {
     }
 
     public static String TABLE_CREATE = null;
+
+    private static String serverName;
+
+    public static String getServerName() {
+        return SQLBans.serverName;
+    }
 
     private Thread mainThread;
 
@@ -131,10 +146,12 @@ public class SQLBans extends JavaPlugin implements Listener {
         }
     }
 
-    public void initializeHandler() {
+    public void load() {
         this.reloadConfig();
         SQLBans.Messages.load(this);
         final FileConfiguration config = this.getConfig();
+        config.setDefaults(YamlConfiguration.loadConfiguration(this.getResource("config.yml")));
+        SQLBans.serverName = config.getString("server-name");
         final String host = config.getString("database.host");
         final int port = config.getInt("database.port");
         final String db = config.getString("database.database");
@@ -207,7 +224,7 @@ public class SQLBans extends JavaPlugin implements Listener {
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
-        this.initializeHandler();
+        this.load();
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -224,10 +241,10 @@ public class SQLBans extends JavaPlugin implements Listener {
                 synchronized (this.bannedCacheSync) {
                     final String name = event.getName();
                     this.bannedCache.add(name);
-                    this.getServer().getScheduler().scheduleAsyncDelayedTask(this, new Runnable() {
+                    this.getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
                         public void run() {
                             synchronized (SQLBans.this.bannedCacheSync) {
-                                SQLBans.this.bannedCache.remove(name);
+                                SQLBans.this.removeCachedBan(name);
                             }
                         }
                     }, 1200);
@@ -239,7 +256,7 @@ public class SQLBans extends JavaPlugin implements Listener {
         }
     }
 
-    public void unban(String name) {
+    public void removeCachedBan(String name) {
         this.bannedCache.remove(name);
     }
 

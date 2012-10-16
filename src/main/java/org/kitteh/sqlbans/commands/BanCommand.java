@@ -41,18 +41,19 @@ public class BanCommand implements CommandExecutor {
             return false;
         }
         String targetName = args[0];
-        final String reason = args.length>1?Util.separatistsUnite(args, " ", 1):null;
+        final String reason = args.length > 1 ? Util.separatistsUnite(args, " ", 1) : "Banned";
 
         final Player target = this.plugin.getServer().getPlayer(targetName);
         boolean online = false;
         if ((target != null) && target.isOnline()) {
             targetName = target.getName();
             online = true;
-            target.kickPlayer(SQLBans.Messages.getDisconnectKicked(reason, sender.getName()));
+            target.kickPlayer(SQLBans.Messages.getDisconnectBanned(reason, sender.getName()));
         }
 
-        final String banMessage = SQLBans.Messages.getIngameBanned(target.getName(), reason, sender.getName(), false);
-        final String banAdminMessage = SQLBans.Messages.getIngameBanned(target.getName(), reason, sender.getName(), true);
+        final String banned_name = online ? target.getName() : targetName;
+        final String banMessage = SQLBans.Messages.getIngameBanned(banned_name, reason, sender.getName(), false);
+        final String banAdminMessage = SQLBans.Messages.getIngameBanned(banned_name, reason, sender.getName(), true);
         for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
             if ((player != null) && player.isOnline()) {
                 if (online || Perm.MESSAGE_BAN_OFFLINE.has(player)) {
@@ -68,14 +69,15 @@ public class BanCommand implements CommandExecutor {
         this.plugin.getServer().getConsoleSender().sendMessage(banAdminMessage);
 
         final String admin = sender.getName();
-        final String username = targetName;
+        final String info = targetName;
+        final int type = 0; // TODO
         this.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, new Runnable() {
             public void run() {
                 try {
-                    SQLHandler.ban(username, reason, admin);
+                    SQLHandler.ban(info, reason, admin, type);
                 } catch (final Exception e) {
-                    BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + username, e);
-                    Util.queueMessage(BanCommand.this.plugin, Perm.MESSAGE_BAN_ADMIN.toString(), ChatColor.RED + "[SQLBans] Failed to ban " + username);
+                    BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + info, e);
+                    Util.queueMessage(BanCommand.this.plugin, Perm.MESSAGE_BAN_ADMIN.toString(), ChatColor.RED + "[SQLBans] Failed to ban " + info);
                 }
             }
         });
