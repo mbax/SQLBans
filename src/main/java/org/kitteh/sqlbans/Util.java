@@ -19,6 +19,28 @@ package org.kitteh.sqlbans;
 import org.bukkit.plugin.Plugin;
 
 public class Util {
+
+    public static Boolean isIP(String string) {
+        final String[] split = string.split("\\.");
+        if ((split.length == 0) && (string.length() < 16)) {
+            return false;
+        }
+        if (split.length == 4) {
+            for (final String s : split) {
+                try {
+                    final int i = Integer.parseInt(s);
+                    if ((i < 0) || (i > 256) || !String.valueOf(i).equals(s)) {
+                        return null;
+                    }
+                } catch (final Exception e) {
+                    return null;
+                }
+            }
+            return true;
+        }
+        return null;
+    }
+
     public static void queueMessage(final Plugin plugin, final String permission, final String message) {
         plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
             public void run() {
