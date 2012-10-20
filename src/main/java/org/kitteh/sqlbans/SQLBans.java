@@ -202,6 +202,7 @@ public class SQLBans extends JavaPlugin implements Listener {
             this.saveDefaultConfig();
             this.getLogger().info("SQLBans config established. Edit the config and restart!");
             this.getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
