@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS `SQLBans_bans` (
+CREATE TABLE IF NOT EXISTS `%s` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `type` tinyint(4) NOT NULL,
   `info` varchar(16) NOT NULL,

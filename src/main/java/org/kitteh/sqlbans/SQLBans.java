@@ -215,7 +215,7 @@ public class SQLBans extends JavaPlugin implements Listener {
         } catch (final IOException e) {
             new SQLBansException("Could not load default table creation text", e).printStackTrace();
         }
-        SQLBans.TABLE_CREATE = builder.toString();
+        SQLBans.TABLE_CREATE = String.format(builder.toString(), getConfig().getString("database.tablename") != null ? getConfig().getString("database.tablename") : "SQLBans_bans");
 
         // Command registration
         this.getCommand("ban").setExecutor(new BanCommand(this));
