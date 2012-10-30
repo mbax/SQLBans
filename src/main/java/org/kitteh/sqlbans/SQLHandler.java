@@ -21,6 +21,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.kitteh.sqlbans.SQLManager.SQLConnection;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
@@ -50,6 +52,19 @@ public class SQLHandler {
         final boolean ret = !banQuery.executeQuery().first();
         con.myWorkHereIsDone();
         return ret;
+    }
+
+    public static Set<BanItem> getAllBans(int type) throws SQLException, SQLBansException {
+        final Set<BanItem> list = new HashSet<BanItem>();
+        final SQLConnection con = SQLHandler.instance().manager.getQueryConnection();
+        final PreparedStatement statement = con.getConnection().prepareStatement("SELECT `info`,`reason`,`admin`,`timestamp`,`banlength` FROM `" + SQLHandler.tableName + "` WHERE `type`=? AND `isbanned`=1");
+        statement.setInt(1, type);
+        final ResultSet result = statement.executeQuery();
+        while (result.next()) {
+            list.add(new BanItem(result.getString("info"), result.getString("admin"), result.getTimestamp("timestamp"), result.getInt("banlength"), result.getString("reason")));
+        }
+        con.myWorkHereIsDone();
+        return list;
     }
 
     public static void nullifyInstance() {
