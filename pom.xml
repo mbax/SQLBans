@@ -23,7 +23,13 @@
     <dependency>
       <groupId>org.bukkit</groupId>
       <artifactId>craftbukkit</artifactId>
-      <version>1.2.5-R4.1-SNAPSHOT</version>
+      <version>1.4.2-R0.1-SNAPSHOT</version>
+      <type>jar</type>
+    </dependency>
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.2.2</version>
       <type>jar</type>
     </dependency>
   </dependencies>
@@ -42,11 +48,7 @@
   </distributionManagement>
 
   <build>
-    <directory>target</directory>
-    <outputDirectory>target/classes</outputDirectory>
     <finalName>${project.artifactId}</finalName>
-    <sourceDirectory>src/main/java</sourceDirectory>
-    <defaultGoal>clean install</defaultGoal>
 
     <resources>
       <resource>
@@ -72,27 +74,39 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.1</version>
-        <configuration>
-          <archive>
-            <manifestEntries>
-              <Main-Class>Main</Main-Class>
-              <Implementation-Title>SQLBans</Implementation-Title>
-              <Implementation-Version>${describe}</Implementation-Version>
-              <Implementation-Vendor>mbax</Implementation-Vendor>
-            </manifestEntries>
-          </archive>
-        </configuration>
+        <version>2.4</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.3.2</version>
-        <inherited>true</inherited>
-        <configuration>
-          <source>1.5</source>
-          <target>1.5</target>
-        </configuration>
+        <version>2.5.1</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>com.google.gson</pattern>
+                  <shadedPattern>org.kitteh.sqlbans.google.gson</shadedPattern>
+                </relocation>
+              </relocations>
+              <artifactSet>
+                <includes>
+                  <include>com.google.code.gson:gson</include>
+                </includes>
+              </artifactSet>
+              <minimizeJar>true</minimizeJar>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
