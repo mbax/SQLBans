@@ -71,7 +71,7 @@ public class BanCommand implements CommandExecutor {
         final String admin = sender.getName();
         final String info = targetName;
         final int type = 0; // TODO
-        this.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, new Runnable() {
+        this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             public void run() {
                 try {
                     SQLHandler.ban(info, reason, admin, type);

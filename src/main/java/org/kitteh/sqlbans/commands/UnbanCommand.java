@@ -55,7 +55,7 @@ public class UnbanCommand implements CommandExecutor {
 
         final String username = targetName;
         this.plugin.removeCachedBan(username);
-        this.plugin.getServer().getScheduler().scheduleAsyncDelayedTask(this.plugin, new Runnable() {
+        this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
             public void run() {
                 try {
                     SQLHandler.unban(username);

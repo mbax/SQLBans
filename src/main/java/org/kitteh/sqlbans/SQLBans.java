@@ -225,7 +225,7 @@ public class SQLBans extends JavaPlugin implements Listener {
 
         this.getServer().getPluginManager().registerEvents(this, this);
 
-        this.getServer().getScheduler().scheduleAsyncRepeatingTask(this, new BackupTask(this), 100, 6000);
+        this.getServer().getScheduler().runTaskTimerAsynchronously(this, new BackupTask(this), 100, 6000);
 
         this.load();
     }
