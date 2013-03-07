@@ -17,6 +17,8 @@ database:
     password: pear
 server-name: default
 messages:
+  command:
+    nopermission: '&&cYou do not have permission to use this command'
   disconnect:
     rejected: '&&cVisit our website for unban'
     kicked:

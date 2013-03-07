@@ -17,18 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kitteh.sqlbans.exceptions;
+package org.kitteh.sqlbans.api;
 
-public class SQLBansException extends Exception {
+public interface Player extends CommandSender {
 
-    private static final long serialVersionUID = 1L;
-
-    public SQLBansException(String string) {
-        super(string);
-    }
-
-    public SQLBansException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
-
+    public void kick(String reason);
 }

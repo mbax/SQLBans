@@ -1,0 +1,4 @@
+name: SQLBans
+main: org.kitteh.sqlbans.bungeecord.SQLBansPlugin
+version: '${project.version}'
+author: mbaxter

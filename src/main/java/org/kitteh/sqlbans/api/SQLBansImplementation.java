@@ -17,18 +17,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kitteh.sqlbans.exceptions;
+package org.kitteh.sqlbans.api;
 
-public class SQLBansException extends Exception {
+import java.io.File;
+import java.util.logging.Logger;
 
-    private static final long serialVersionUID = 1L;
+import org.kitteh.sqlbans.Perm;
 
-    public SQLBansException(String string) {
-        super(string);
-    }
+public interface SQLBansImplementation {
 
-    public SQLBansException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
+    public Scheduler getScheduler();
 
+    public void shutdown();
+
+    public void sendMessage(final Perm permission, final String message);
+
+    public void registerCommand(String string, SQLBansCommand command);
+
+    public void registerLoginAttemptListening();
+
+    public Logger getLogger();
+
+    public File getDataFolder();
+
+    public String getVersion();
+
+    public Player getPlayer(String name);
+
+    public Player[] getOnlinePlayers();
 }

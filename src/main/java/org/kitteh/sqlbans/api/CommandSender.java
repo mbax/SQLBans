@@ -17,18 +17,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kitteh.sqlbans.exceptions;
+package org.kitteh.sqlbans.api;
 
-public class SQLBansException extends Exception {
+import org.kitteh.sqlbans.Perm;
 
-    private static final long serialVersionUID = 1L;
+public interface CommandSender {
 
-    public SQLBansException(String string) {
-        super(string);
-    }
+    public String getName();
 
-    public SQLBansException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
+    public boolean hasPermission(Perm permission);
 
+    public void sendMessage(String message);
 }

@@ -1,13 +1,16 @@
 /*
  * SQLBans
  * Copyright 2012 Matt Baxter
- * 
+ *
+ * Google Gson
+ * Copyright 2008-2011 Google Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,7 +43,7 @@ public class SQLHandler {
         statement.setString(3, reason);
         statement.setString(4, admin);
         statement.setTimestamp(5, new Timestamp(new Date().getTime()));
-        statement.setString(6, SQLBans.getServerName());
+        statement.setString(6, SQLHandler.instance().plugin.getServerName());
         statement.executeUpdate();
         con.myWorkHereIsDone();
     }
@@ -71,7 +74,7 @@ public class SQLHandler {
         SQLHandler.instance = null;
     }
 
-    public static void start(String host, int port, String user, String pass, String db, String table) throws SQLBansException {
+    public static void start(SQLBans plugin, String host, int port, String user, String pass, String db, String table) throws SQLBansException {
         if (SQLHandler.instance != null) {
             throw new SQLBansException("Thread already running! Something has gone terribly wrong!");
         }
@@ -80,7 +83,7 @@ public class SQLHandler {
         } catch (final ClassNotFoundException e1) {
             throw new SQLBansException("What on earth are you doing. This isn't CraftBukkit.");
         }
-        SQLHandler.instance = new SQLHandler(host, port, user, pass, db, table);
+        SQLHandler.instance = new SQLHandler(plugin, host, port, user, pass, db, table);
     }
 
     public static void unban(String user) throws SQLBansException, SQLException {
@@ -99,12 +102,14 @@ public class SQLHandler {
     }
 
     private SQLManager manager;
+    private SQLBans plugin;
 
     public SQLHandler() throws SQLBansException {
         throw new SQLBansException("Stop right there, criminal scum");
     }
 
-    private SQLHandler(String host, int port, String user, String pass, String db, String table) throws SQLBansException {
+    private SQLHandler(SQLBans plugin, String host, int port, String user, String pass, String db, String table) throws SQLBansException {
+        this.plugin = plugin;
         try {
             this.manager = new SQLManager("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
         } catch (final Exception e) {
@@ -126,5 +131,4 @@ public class SQLHandler {
             throw new SQLBansException("SQL failure while checking for table!", e);
         }
     }
-
 }

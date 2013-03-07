@@ -1,13 +1,16 @@
 /*
  * SQLBans
  * Copyright 2012 Matt Baxter
- * 
+ *
+ * Google Gson
+ * Copyright 2008-2011 Google Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,31 +19,32 @@
  */
 package org.kitteh.sqlbans.commands;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.kitteh.sqlbans.ChatColor;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.Util;
+import org.kitteh.sqlbans.api.CommandSender;
+import org.kitteh.sqlbans.api.Player;
+import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class KickCommand implements CommandExecutor {
+public class KickCommand extends SQLBansCommand {
 
     private final SQLBans plugin;
 
     public KickCommand(SQLBans plugin) {
+        super("kick", Perm.COMMAND_KICK, "k");
         this.plugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Override
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (args.length == 0) {
             return false;
         }
 
-        final Player target = this.plugin.getServer().getPlayer(args[0]);
+        final Player target = this.plugin.getPlayer(args[0]);
 
-        if ((target == null) || !target.isOnline()) {
+        if ((target == null)) {
             sender.sendMessage(ChatColor.RED + "Could not find a player named " + args[0]);
             return true;
         }
@@ -49,17 +53,17 @@ public class KickCommand implements CommandExecutor {
 
         final String kick = SQLBans.Messages.getIngameKicked(target.getName(), reason, sender.getName(), false);
         final String kickAdmin = SQLBans.Messages.getIngameKicked(target.getName(), reason, sender.getName(), true);
-        target.kickPlayer(SQLBans.Messages.getDisconnectKicked(reason, sender.getName()));
-        for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
-            if ((player != null) && player.isOnline()) {
-                if (Perm.MESSAGE_KICK_ADMIN.has(player)) {
+        target.kick(SQLBans.Messages.getDisconnectKicked(reason, sender.getName()));
+        for (final Player player : this.plugin.getOnlinePlayers()) {
+            if ((player != null)) {
+                if (player.hasPermission(Perm.MESSAGE_KICK_ADMIN)) {
                     player.sendMessage(kickAdmin);
-                } else if (Perm.MESSAGE_KICK_NORMAL.has(player)) {
+                } else if (player.hasPermission(Perm.MESSAGE_KICK_NORMAL)) {
                     player.sendMessage(kick);
                 }
             }
         }
-        this.plugin.getServer().getConsoleSender().sendMessage(kickAdmin);
+        this.plugin.getLogger().info(kickAdmin);
         return true;
     }
 

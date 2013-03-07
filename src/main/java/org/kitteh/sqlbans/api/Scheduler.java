@@ -17,18 +17,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kitteh.sqlbans.exceptions;
+package org.kitteh.sqlbans.api;
 
-public class SQLBansException extends Exception {
+public interface Scheduler {
 
-    private static final long serialVersionUID = 1L;
+    void delayedTask(Runnable runnable, int delay);
 
-    public SQLBansException(String string) {
-        super(string);
-    }
+    void repeatingTask(Runnable runnable, int delay, int period);
 
-    public SQLBansException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
-
+    void run(Runnable runnable);
 }

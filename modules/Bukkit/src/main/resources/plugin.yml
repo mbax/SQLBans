@@ -1,5 +1,5 @@
 name: SQLBans
-main: org.kitteh.sqlbans.SQLBans
+main: org.kitteh.sqlbans.bukkit.SQLBansPlugin
 version: '${project.version}'
 website: http://kitteh.org
 author: mbaxter

@@ -1,13 +1,16 @@
 /*
  * SQLBans
  * Copyright 2012 Matt Baxter
- * 
+ *
+ * Google Gson
+ * Copyright 2008-2011 Google Inc.
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *     http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,23 +21,27 @@ package org.kitteh.sqlbans.commands;
 
 import java.util.logging.Level;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.kitteh.sqlbans.*;
+import org.kitteh.sqlbans.ChatColor;
+import org.kitteh.sqlbans.Perm;
+import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLBans.Messages;
+import org.kitteh.sqlbans.SQLHandler;
+import org.kitteh.sqlbans.Util;
+import org.kitteh.sqlbans.api.CommandSender;
+import org.kitteh.sqlbans.api.Player;
+import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class UnbanCommand implements CommandExecutor {
+public class UnbanCommand extends SQLBansCommand {
 
     public SQLBans plugin;
 
     public UnbanCommand(SQLBans plugin) {
+        super("unban", Perm.COMMAND_UNBAN);
         this.plugin = plugin;
     }
 
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    @Override
+    public boolean onCommand(CommandSender sender, String[] args) {
         if (args.length == 0) {
             return false;
         }
@@ -42,26 +49,31 @@ public class UnbanCommand implements CommandExecutor {
 
         final String unbanMessage = Messages.getIngameUnbanned(targetName, sender.getName(), false);
         final String unbanAdminMessage = Messages.getIngameUnbanned(targetName, sender.getName(), true);
-        for (final Player player : this.plugin.getServer().getOnlinePlayers()) {
-            if ((player != null) && player.isOnline()) {
-                if (Perm.MESSAGE_UNBAN_ADMIN.has(player)) {
+        for (final Player player : this.plugin.getOnlinePlayers()) {
+            if ((player != null)) {
+                if (player.hasPermission(Perm.MESSAGE_UNBAN_ADMIN)) {
                     player.sendMessage(unbanAdminMessage);
-                } else if (Perm.MESSAGE_UNBAN_NORMAL.has(player)) {
+                } else if (player.hasPermission(Perm.MESSAGE_UNBAN_NORMAL)) {
                     player.sendMessage(unbanMessage);
                 }
             }
         }
-        this.plugin.getServer().getConsoleSender().sendMessage(unbanAdminMessage);
+        this.plugin.getLogger().info(unbanAdminMessage);
 
-        final String username = targetName;
-        this.plugin.removeCachedBan(username);
-        this.plugin.getServer().getScheduler().runTaskAsynchronously(this.plugin, new Runnable() {
+        final String name = targetName;
+        if (Util.isIP(name)) {
+            this.plugin.getBanCache().removeIP(name);
+        } else {
+            this.plugin.getBanCache().removeName(name);
+        }
+        this.plugin.getScheduler().run(new Runnable() {
+            @Override
             public void run() {
                 try {
-                    SQLHandler.unban(username);
+                    SQLHandler.unban(name);
                 } catch (final Exception e) {
-                    UnbanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not unban " + username, e);
-                    Util.queueMessage(UnbanCommand.this.plugin, Perm.MESSAGE_UNBAN_ADMIN.toString(), ChatColor.RED + "[SQLBans] Failed to unban " + username);
+                    UnbanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not unban " + name, e);
+                    UnbanCommand.this.plugin.sendMessage(Perm.MESSAGE_UNBAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to unban " + name);
                 }
             }
         });
