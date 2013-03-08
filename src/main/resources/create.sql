@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS `%s` (
   `type` tinyint(4) NOT NULL,
   `username` varchar(16) NOT NULL DEFAULT '',
   `ip` varbinary(16) NOT NULL DEFAULT '0',
-  `reason` tinytext NOT NULL DEFAULT '',
+  `reason` varchar(255) NOT NULL DEFAULT '',
   `admin` varchar(16) NOT NULL DEFAULT 'CONSOLE',
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `server` varchar(32) NOT NULL DEFAULT 'default',
