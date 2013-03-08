@@ -19,41 +19,44 @@
  */
 package org.kitteh.sqlbans;
 
-import java.util.Date;
+import java.net.InetAddress;
 
-public class BanItem {
+public class UserData {
 
-    private final String reason;
-    private final String admin;
-    private final Date created;
-    private final int length;
-    private final String info;
+    public enum Result {
+        UNCHANGED,
+        KICK_OTHER,
+        KICK_BANNED;
+    }
 
-    public BanItem(String info, String admin, Date created, int length, String reason) {
-        this.info = info;
-        this.admin = admin;
-        this.created = created;
-        this.length = length;
+    private Result result = Result.UNCHANGED;
+    private final String name;
+    private final InetAddress ip;
+    private String reason = null;
+
+    public UserData(String name, InetAddress ip) {
+        this.name = name;
+        this.ip = ip;
+    }
+
+    public void disallow(Result result, String reason) {
+        this.result = result;
         this.reason = reason;
     }
 
-    public String getAdmin() {
-        return this.admin;
+    public InetAddress getIP() {
+        return this.ip;
     }
 
-    public Date getCreated() {
-        return this.created;
-    }
-
-    public String getInfo() {
-        return this.info;
-    }
-
-    public int getLength() {
-        return this.length;
+    public String getName() {
+        return this.name;
     }
 
     public String getReason() {
         return this.reason;
+    }
+
+    public Result getResult() {
+        return this.result;
     }
 }

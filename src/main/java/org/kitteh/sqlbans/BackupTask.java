@@ -29,6 +29,43 @@ import java.util.logging.Level;
 
 public class BackupTask implements Runnable {
 
+    public static class BanItem {
+
+        private final String reason;
+        private final String admin;
+        private final Date created;
+        private final int length;
+        private final String info;
+
+        public BanItem(String info, String admin, Date created, int length, String reason) {
+            this.info = info;
+            this.admin = admin;
+            this.created = created;
+            this.length = length;
+            this.reason = reason;
+        }
+
+        public String getAdmin() {
+            return this.admin;
+        }
+
+        public Date getCreated() {
+            return this.created;
+        }
+
+        public String getInfo() {
+            return this.info;
+        }
+
+        public int getLength() {
+            return this.length;
+        }
+
+        public String getReason() {
+            return this.reason;
+        }
+    }
+
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
     private final SQLBans sqlbans;
 
@@ -38,43 +75,45 @@ public class BackupTask implements Runnable {
 
     @Override
     public void run() {
-        Set<BanItem> set = null;
-        try {
-            set = SQLHandler.getAllBans(0);
-        } catch (final Exception e) {
-            this.sqlbans.getLogger().log(Level.SEVERE, "Could not acquire bans for backup", e);
-        }
-        if ((set == null) || set.isEmpty()) {
-            return;
-        }
-        try {
-            final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.sqlbans.getDataFolder(), "backup.txt"), false));
-
-            writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.sqlbans.getVersion());
-            writer.println("# victim name | ban date | banned by | banned until | reason");
-            writer.println();
-
-            for (final BanItem item : set) {
-                final Date created = item.getCreated();
-                final int length = item.getLength();
-                final Date expires = length == 0 ? null : new Date(created.getTime() + (item.getLength() * 60000));
-
-                final StringBuilder builder = new StringBuilder();
-
-                builder.append(item.getInfo());
-                builder.append("|");
-                builder.append(BackupTask.format.format(created));
-                builder.append("|");
-                builder.append(item.getAdmin());
-                builder.append("|");
-                builder.append(expires == null ? "Forever" : BackupTask.format.format(expires));
-                builder.append("|");
-                builder.append(item.getReason());
-                writer.println(builder.toString());
+        for (final BanType type : BanType.values()) {
+            Set<BanItem> set = null;
+            try {
+                set = SQLHandler.getAllBans(type);
+            } catch (final Exception e) {
+                this.sqlbans.getLogger().log(Level.SEVERE, "Could not acquire " + type.getName() + " bans for backup", e);
             }
-            writer.close();
-        } catch (final Exception e) {
-            this.sqlbans.getLogger().log(Level.SEVERE, "Could not save ban list", e);
+            if ((set == null) || set.isEmpty()) {
+                continue;
+            }
+            try {
+                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.sqlbans.getDataFolder(), "backup-" + type.getName() + "s.txt"), false));
+
+                writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.sqlbans.getVersion());
+                writer.println("# victim name | ban date | banned by | banned until | reason");
+                writer.println();
+
+                for (final BanItem item : set) {
+                    final Date created = item.getCreated();
+                    final int length = item.getLength();
+                    final Date expires = length == 0 ? null : new Date(created.getTime() + (item.getLength() * 60000));
+
+                    final StringBuilder builder = new StringBuilder();
+
+                    builder.append(item.getInfo());
+                    builder.append("|");
+                    builder.append(BackupTask.format.format(created));
+                    builder.append("|");
+                    builder.append(item.getAdmin());
+                    builder.append("|");
+                    builder.append(expires == null ? "Forever" : BackupTask.format.format(expires));
+                    builder.append("|");
+                    builder.append(item.getReason());
+                    writer.println(builder.toString());
+                }
+                writer.close();
+            } catch (final Exception e) {
+                this.sqlbans.getLogger().log(Level.SEVERE, "Could not save " + type.getName() + " ban list", e);
+            }
         }
     }
 }

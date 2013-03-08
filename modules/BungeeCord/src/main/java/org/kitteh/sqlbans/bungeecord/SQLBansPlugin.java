@@ -9,7 +9,7 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import org.kitteh.sqlbans.JoinAttempt;
+import org.kitteh.sqlbans.UserData;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.api.Player;
@@ -71,11 +71,11 @@ public class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementa
 
     @Subscribe
     public void onLogin(LoginEvent event) {
-        final JoinAttempt attempt = new JoinAttempt(event.getConnection().getName(), event.getConnection().getAddress().getAddress().getHostAddress());
-        this.sqlbans.onJoinAttempt(attempt);
-        if (attempt.getResult() != JoinAttempt.Result.UNCHANGED) {
+        final UserData data = new UserData(event.getConnection().getName(), event.getConnection().getAddress().getAddress());
+        this.sqlbans.processUserData(data, true);
+        if (data.getResult() != UserData.Result.UNCHANGED) {
             event.setCancelled(true);
-            event.setCancelReason(attempt.getReason());
+            event.setCancelReason(data.getReason());
         }
     }
 

@@ -57,7 +57,10 @@ public class SQLManager {
         }
 
         public void reset() throws SQLException {
-            this.connection.close();
+            try {
+                this.connection.close();
+            } catch (SQLException e) {
+            }
             this.connection = DriverManager.getConnection(this.url);
             this.inUse = false;
         }
@@ -85,9 +88,8 @@ public class SQLManager {
             if (!test.inUse()) {
                 con = test;
             }
-            if ((System.currentTimeMillis() - 5000) > start) {
+            if (!test.getConnection().isValid(1) || (System.currentTimeMillis() - 5000) > start) {
                 test.reset();
-                System.out.println("[SQLBans] Something went funky with SQL. Resetting a connection");
                 con = test;
             }
             if (i++ == this.conCount) {

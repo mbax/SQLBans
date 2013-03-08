@@ -19,6 +19,7 @@
  */
 package org.kitteh.sqlbans;
 
+import java.net.InetAddress;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,13 +30,13 @@ public class BanCache {
 
     private final Set<String> names = Collections.synchronizedSet(new HashSet<String>());
 
-    private final Set<String> ips = Collections.synchronizedSet(new HashSet<String>());
+    private final Set<InetAddress> ips = Collections.synchronizedSet(new HashSet<InetAddress>());
 
     BanCache(SQLBans plugin) {
         this.plugin = plugin;
     }
 
-    public boolean containsIP(String ip) {
+    public boolean containsIP(InetAddress ip) {
         return this.ips.contains(ip);
     }
 
@@ -43,7 +44,7 @@ public class BanCache {
         return this.names.contains(name.toLowerCase());
     }
 
-    public void removeIP(String ip) {
+    public void removeIP(InetAddress ip) {
         this.ips.remove(ip);
     }
 
@@ -51,7 +52,7 @@ public class BanCache {
         this.names.remove(name.toLowerCase());
     }
 
-    void addIP(final String ip) {
+    void addIP(final InetAddress ip) {
         this.ips.add(ip);
         this.plugin.getScheduler().delayedTask(new Runnable() {
             @Override

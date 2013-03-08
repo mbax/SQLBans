@@ -215,7 +215,7 @@ public class SQLBans {
         } catch (final IOException e) {
             new SQLBansException("Could not load default table creation text", e).printStackTrace();
         }
-        SQLBans.TABLE_CREATE = String.format(builder.toString(), this.config.getString("database.tablename") != null ? this.config.getString("database.tablename") : "SQLBans_bans");
+
         SQLBans.Messages.load(this.config);
         this.serverName = this.config.getString("server-name");
         final String host = this.config.getString("database.host");
@@ -223,9 +223,11 @@ public class SQLBans {
         final String db = this.config.getString("database.database");
         final String user = this.config.getString("database.auth.username");
         final String pass = this.config.getString("database.auth.password");
-        final String tableName = this.config.getString("database.tablename");
+        final String bansTableName = this.config.getString("database.tablenames.bans", "SQLBans_bans");
+        final String logTableName = this.config.getString("database.tablenames.log", "SQLBans_log");
+        SQLBans.TABLE_CREATE = String.format(builder.toString(), this.config.getString("database.tablename") != null ? this.config.getString("database.tablename") : "SQLBans_bans");
         try {
-            SQLHandler.start(this, host, port, user, pass, db, tableName);
+            SQLHandler.start(this, host, port, user, pass, db, bansTableName, logTableName);
         } catch (final SQLBansException e) {
             this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
             this.implementation.shutdown();
@@ -233,22 +235,22 @@ public class SQLBans {
         }
     }
 
-    public void onJoinAttempt(JoinAttempt attempt) {
-        if (this.banCache.containsName(attempt.getName()) || this.banCache.containsIP(attempt.getIP())) {
-            attempt.disallow(JoinAttempt.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+    public void processUserData(UserData data, boolean isJoin) {
+        if (this.banCache.containsName(data.getName()) || this.banCache.containsIP(data.getIP())) {
+            data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
             return;
         }
         try {
-            if (!SQLHandler.canJoin(attempt.getName())) {
-                attempt.disallow(JoinAttempt.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
-                this.banCache.addName(attempt.getName());
+            if (!SQLHandler.canJoin(data.getName())) {
+                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+                this.banCache.addName(data.getName());
             }
-            if (!SQLHandler.canJoin(attempt.getIP())) {
-                attempt.disallow(JoinAttempt.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
-                this.banCache.addName(attempt.getIP());
+            if (!SQLHandler.canJoin(data.getIP())) {
+                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+                this.banCache.addIP(data.getIP());
             }
         } catch (final Exception e) {
-            attempt.disallow(JoinAttempt.Result.KICK_OTHER, "Connection error: Please retry.");
+            data.disallow(UserData.Result.KICK_OTHER, "Connection error: Please retry.");
             this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
         }
     }

@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.kitteh.sqlbans.JoinAttempt;
+import org.kitteh.sqlbans.UserData;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.api.Player;
@@ -51,9 +51,9 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
     @Override
     public void onEnable() {
         this.sqlbans = new SQLBans(this);
-        final Set<JoinAttempt> attempts = new HashSet<JoinAttempt>();
+        final Set<UserData> attempts = new HashSet<UserData>();
         for (final org.bukkit.entity.Player player : this.getServer().getOnlinePlayers()) {
-            final JoinAttempt attempt = new JoinAttempt(player.getName(), player.getAddress().getAddress().getHostAddress());
+            final UserData attempt = new UserData(player.getName(), player.getAddress().getAddress());
             attempts.add(attempt);
         }
         if (!attempts.isEmpty()) {
@@ -61,9 +61,9 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
                 @Override
                 public void run() {
                     final Map<String, String> kick = new HashMap<String, String>();
-                    for (final JoinAttempt attempt : attempts) {
-                        SQLBansPlugin.this.sqlbans.onJoinAttempt(attempt);
-                        if (attempt.getResult() != JoinAttempt.Result.UNCHANGED) {
+                    for (final UserData attempt : attempts) {
+                        SQLBansPlugin.this.sqlbans.processUserData(attempt, false);
+                        if (attempt.getResult() != UserData.Result.UNCHANGED) {
                             kick.put(attempt.getName(), attempt.getReason());
                         }
                     }
@@ -88,18 +88,18 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        final JoinAttempt attempt = new JoinAttempt(event.getName(), event.getAddress().getHostAddress());
-        this.sqlbans.onJoinAttempt(attempt);
-        if (attempt.getResult() != JoinAttempt.Result.UNCHANGED) {
+        final UserData data = new UserData(event.getName(), event.getAddress());
+        this.sqlbans.processUserData(data, true);
+        if (data.getResult() != UserData.Result.UNCHANGED) {
             AsyncPlayerPreLoginEvent.Result result;
-            switch (attempt.getResult()) {
+            switch (data.getResult()) {
                 case KICK_BANNED:
                     result = AsyncPlayerPreLoginEvent.Result.KICK_BANNED;
                     break;
                 default:
                     result = AsyncPlayerPreLoginEvent.Result.KICK_OTHER;
             }
-            event.disallow(result, attempt.getReason());
+            event.disallow(result, data.getReason());
         }
     }
 

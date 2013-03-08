@@ -19,42 +19,24 @@
  */
 package org.kitteh.sqlbans;
 
-public class JoinAttempt {
+public enum BanType {
 
-    public enum Result {
-        UNCHANGED,
-        KICK_OTHER,
-        KICK_BANNED;
-    }
+    NAME("player", 0),
+    IP("ip", 1);
 
-    private Result result = Result.UNCHANGED;
+    private final int id;
     private final String name;
-    private final String ip;
-    private String reason = null;
 
-    public JoinAttempt(String name, String ip) {
+    private BanType(String name, int id) {
+        this.id = id;
         this.name = name;
-        this.ip = ip;
     }
 
-    public void disallow(Result result, String reason) {
-        this.result = result;
-        this.reason = reason;
-    }
-
-    public String getIP() {
-        return this.ip;
+    public int getID() {
+        return this.id;
     }
 
     public String getName() {
         return this.name;
-    }
-
-    public String getReason() {
-        return this.reason;
-    }
-
-    public Result getResult() {
-        return this.result;
     }
 }

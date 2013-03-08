@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -34,7 +35,11 @@ public class Config {
     public Config(SQLBans plugin) {
         final File configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
-            // TODO save default
+            try {
+                plugin.saveResource("config.yml", false);
+            } catch (final Exception e) {
+                plugin.getLogger().log(Level.WARNING, "Could not save default config", e);
+            }
         }
         final Yaml yaml = new Yaml();
         try {
@@ -67,6 +72,14 @@ public class Config {
             return (String) o;
         }
         return null;
+    }
+
+    public String getString(String string, String def) {
+        final String result = this.getString(string);
+        if (result == null) {
+            return def;
+        }
+        return result;
     }
 
     private Object get(String string, Map<String, Object> map) {

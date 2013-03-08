@@ -19,6 +19,8 @@
  */
 package org.kitteh.sqlbans.commands;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 
 import org.kitteh.sqlbans.ChatColor;
@@ -60,17 +62,29 @@ public class UnbanCommand extends SQLBansCommand {
         }
         this.plugin.getLogger().info(unbanAdminMessage);
 
-        final String name = targetName;
-        if (Util.isIP(name)) {
-            this.plugin.getBanCache().removeIP(name);
-        } else {
-            this.plugin.getBanCache().removeName(name);
+        InetAddress ipaddress = null;
+        if (Util.isIP(targetName)) {
+            try {
+                ipaddress = InetAddress.getByName(targetName);
+            } catch (final UnknownHostException e) {
+            }
         }
+        if (ipaddress != null) {
+            this.plugin.getBanCache().removeIP(ipaddress);
+        } else {
+            this.plugin.getBanCache().removeName(targetName);
+        }
+        final InetAddress address = ipaddress;
+        final String name = address != null ? address.getHostAddress() : targetName;
         this.plugin.getScheduler().run(new Runnable() {
             @Override
             public void run() {
                 try {
-                    SQLHandler.unban(name);
+                    if (address != null) {
+                        SQLHandler.unban(address);
+                    } else {
+                        SQLHandler.unban(name);
+                    }
                 } catch (final Exception e) {
                     UnbanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not unban " + name, e);
                     UnbanCommand.this.plugin.sendMessage(Perm.MESSAGE_UNBAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to unban " + name);

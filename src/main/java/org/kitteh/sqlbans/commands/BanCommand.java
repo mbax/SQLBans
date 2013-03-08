@@ -19,8 +19,11 @@
  */
 package org.kitteh.sqlbans.commands;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.logging.Level;
 
+import org.kitteh.sqlbans.BanType;
 import org.kitteh.sqlbans.ChatColor;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
@@ -47,14 +50,20 @@ public class BanCommand extends SQLBansCommand {
         String targetName = args[0];
         final String reason = args.length > 1 ? Util.separatistsUnite(args, " ", 1) : "Banned";
 
-        final int type = Util.isIP(targetName) ? 1 : 0;
+        final BanType type = Util.isIP(targetName) ? BanType.IP : BanType.NAME;
         boolean online = false;
-        if (type == 0) {
+        InetAddress ipaddress = null;
+        if (type == BanType.NAME) {
             final Player target = this.plugin.getPlayer(targetName);
             if ((target != null)) {
                 targetName = target.getName();
                 online = true;
                 target.kick(SQLBans.Messages.getDisconnectBanned(reason, sender.getName()));
+            }
+        } else {
+            try {
+                ipaddress = InetAddress.getByName(targetName);
+            } catch (final UnknownHostException e) {
             }
         }
 
@@ -74,20 +83,24 @@ public class BanCommand extends SQLBansCommand {
 
         this.plugin.getLogger().info(banAdminMessage);
 
+        final InetAddress address = ipaddress;
         final String admin = sender.getName();
-        final String info = targetName;
+        final String name = type == BanType.NAME ? targetName : address.getHostAddress();
         this.plugin.getScheduler().run(new Runnable() {
             @Override
             public void run() {
                 try {
-                    SQLHandler.ban(info, reason, admin, type);
+                    if (type == BanType.NAME) {
+                        SQLHandler.banName(name, reason, admin);
+                    } else {
+                        SQLHandler.banIP(address, reason, admin);
+                    }
                 } catch (final Exception e) {
-                    BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + info, e);
-                    BanCommand.this.plugin.sendMessage(Perm.MESSAGE_BAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to ban " + info);
+                    BanCommand.this.plugin.getLogger().log(Level.SEVERE, "Could not ban " + name, e);
+                    BanCommand.this.plugin.sendMessage(Perm.MESSAGE_BAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to ban " + name);
                 }
             }
         });
         return true;
     }
-
 }
