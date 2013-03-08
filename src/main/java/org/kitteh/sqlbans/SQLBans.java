@@ -225,7 +225,7 @@ public class SQLBans {
         final String pass = this.config.getString("database.auth.password");
         final String bansTableName = this.config.getString("database.tablenames.bans", "SQLBans_bans");
         final String logTableName = this.config.getString("database.tablenames.log", "SQLBans_log");
-        SQLBans.TABLE_CREATE = String.format(builder.toString(), this.config.getString("database.tablename") != null ? this.config.getString("database.tablename") : "SQLBans_bans");
+        SQLBans.TABLE_CREATE = String.format(builder.toString(), bansTableName, logTableName);
         try {
             SQLHandler.start(this, host, port, user, pass, db, bansTableName, logTableName);
         } catch (final SQLBansException e) {
