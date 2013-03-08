@@ -131,8 +131,6 @@ public class SQLBans {
         }
     }
 
-    public static String TABLE_CREATE = null;
-
     private final BanCache banCache = new BanCache(this);
 
     private Config config;
@@ -205,17 +203,6 @@ public class SQLBans {
 
     public void load() throws SQLBansException {
         this.config = new Config(this);
-        final StringBuilder builder = new StringBuilder();
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
-            String next;
-            while ((next = reader.readLine()) != null) {
-                builder.append(next);
-            }
-        } catch (final IOException e) {
-            new SQLBansException("Could not load default table creation text", e).printStackTrace();
-        }
-
         SQLBans.Messages.load(this.config);
         this.serverName = this.config.getString("server-name");
         final String host = this.config.getString("database.host");
@@ -225,9 +212,21 @@ public class SQLBans {
         final String pass = this.config.getString("database.auth.password");
         final String bansTableName = this.config.getString("database.tablenames.bans", "SQLBans_bans");
         final String logTableName = this.config.getString("database.tablenames.log", "SQLBans_log");
-        SQLBans.TABLE_CREATE = String.format(builder.toString(), bansTableName, logTableName);
+
+        String tableCreate = null;
+        final StringBuilder builder = new StringBuilder();
         try {
-            SQLHandler.start(this, host, port, user, pass, db, bansTableName, logTableName);
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
+            String next;
+            while ((next = reader.readLine()) != null) {
+                builder.append(next);
+            }
+            tableCreate = String.format(builder.toString(), bansTableName, logTableName);
+        } catch (final IOException e) {
+            new SQLBansException("Could not load default table creation text", e).printStackTrace();
+        }
+        try {
+            SQLHandler.start(this, host, port, user, pass, db, bansTableName, logTableName, tableCreate);
         } catch (final SQLBansException e) {
             this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
             this.implementation.shutdown();

@@ -165,7 +165,7 @@ public class SQLHandler {
         SQLHandler.instance = null;
     }
 
-    public static void start(SQLBans plugin, String host, int port, String user, String pass, String db, String banTableName, String logTableName) throws SQLBansException {
+    public static void start(SQLBans plugin, String host, int port, String user, String pass, String db, String banTableName, String logTableName, String tableCreate) throws SQLBansException {
         if (SQLHandler.instance != null) {
             throw new SQLBansException("Thread already running! Something has gone terribly wrong!");
         }
@@ -174,7 +174,7 @@ public class SQLHandler {
         } catch (final ClassNotFoundException e1) {
             throw new SQLBansException("What on earth are you doing. This isn't CraftBukkit.");
         }
-        SQLHandler.instance = new SQLHandler(plugin, host, port, user, pass, db);
+        SQLHandler.instance = new SQLHandler(plugin, host, port, user, pass, db, tableCreate);
         SQLHandler.banTableName = banTableName;
         SQLHandler.logTableName = logTableName;
     }
@@ -224,7 +224,7 @@ public class SQLHandler {
         throw new SQLBansException("Stop right there, criminal scum");
     }
 
-    private SQLHandler(SQLBans plugin, String host, int port, String user, String pass, String db) throws SQLBansException {
+    private SQLHandler(SQLBans plugin, String host, int port, String user, String pass, String db, String tableCreate) throws SQLBansException {
         this.plugin = plugin;
         try {
             this.manager = new SQLManager("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
@@ -236,10 +236,10 @@ public class SQLHandler {
             final ResultSet bansExists = con.getConnection().getMetaData().getTables(null, null, SQLHandler.banTableName, null);
             final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, SQLHandler.logTableName, null);
             if (!bansExists.first() || !logsExists.first()) {
-                if (SQLBans.TABLE_CREATE != null) {
-                    con.getConnection().createStatement().executeUpdate(SQLBans.TABLE_CREATE);
+                if (tableCreate != null) {
+                    con.getConnection().createStatement().executeUpdate(tableCreate);
                 } else {
-                    new SQLBansException("You need to create the bans table.");
+                    new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
                 }
             }
             con.myWorkHereIsDone();
