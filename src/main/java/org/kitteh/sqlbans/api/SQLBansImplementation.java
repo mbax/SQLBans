@@ -32,7 +32,7 @@ public interface SQLBansImplementation {
 
     public void sendMessage(final Perm permission, final String message);
 
-    public void registerCommand(String string, SQLBansCommand command);
+    public void registerCommand(SQLBansCommand command);
 
     public void registerLoginAttemptListening();
 

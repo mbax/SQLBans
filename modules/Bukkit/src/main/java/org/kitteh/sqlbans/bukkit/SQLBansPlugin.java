@@ -104,8 +104,8 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
     }
 
     @Override
-    public void registerCommand(String string, SQLBansCommand command) {
-        this.getCommand(string).setExecutor(new BukkitCommand(command));
+    public void registerCommand(SQLBansCommand command) {
+        this.getCommand(command.getName()).setExecutor(new BukkitCommand(command));
     }
 
     @Override

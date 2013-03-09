@@ -47,7 +47,7 @@ public abstract class SQLBansCommand {
     }
 
     public boolean processCommand(CommandSender sender, String[] args) {
-        if (!sender.hasPermission(this.permission)) {
+        if (this.permission != null && !sender.hasPermission(this.permission)) {
             sender.sendMessage(Messages.getCommandNoPermission());
             return true;
         }

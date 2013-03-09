@@ -149,10 +149,10 @@ public class SQLBans {
         }
 
         // Command registration
-        this.implementation.registerCommand("ban", new BanCommand(this));
-        this.implementation.registerCommand("kick", new KickCommand(this));
-        this.implementation.registerCommand("sqlbansreload", new ReloadCommand(this));
-        this.implementation.registerCommand("unban", new UnbanCommand(this));
+        this.implementation.registerCommand(new BanCommand(this));
+        this.implementation.registerCommand(new KickCommand(this));
+        this.implementation.registerCommand(new ReloadCommand(this));
+        this.implementation.registerCommand(new UnbanCommand(this));
 
         this.getScheduler().repeatingTask(new BackupTask(this), 5, 300);
 

@@ -24,6 +24,8 @@ public enum Perm {
     /* Commands */
     COMMAND_BAN,
     COMMAND_KICK,
+    COMMAND_LOOKUP_BANS,
+    COMMAND_LOOKUP_IPS,
     COMMAND_RELOAD,
     COMMAND_UNBAN,
 

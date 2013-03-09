@@ -80,7 +80,7 @@ public class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementa
     }
 
     @Override
-    public void registerCommand(String string, SQLBansCommand command) {
+    public void registerCommand(SQLBansCommand command) {
         ProxyServer.getInstance().getPluginManager().registerCommand(new BungeeCommand(command));
     }
 
