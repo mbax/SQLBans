@@ -51,6 +51,12 @@
     </profile>
   </profiles>
 
+  <scm>
+    <connection>scm:git:git://github.com/KittehOrg/SQLBans.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/KittehOrg/SQLBans.git</developerConnection>
+    <url>https://github.com/KittehOrg/SQLBans</url>
+  </scm>
+
   <repositories>
     <repository>
       <id>snapshot-repo</id>
