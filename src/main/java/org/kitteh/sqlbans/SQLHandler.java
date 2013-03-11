@@ -237,7 +237,12 @@ public class SQLHandler {
             final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, SQLHandler.logTableName, null);
             if (!bansExists.first() || !logsExists.first()) {
                 if (tableCreate != null) {
-                    con.getConnection().createStatement().executeUpdate(tableCreate);
+                    String[] split = tableCreate.split(";");
+                    for (String statement : split) {
+                        if (statement.contains("CREATE")) {
+                            con.getConnection().createStatement().executeUpdate(statement);
+                        }
+                    }
                 } else {
                     new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
                 }

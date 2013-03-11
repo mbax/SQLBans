@@ -44,7 +44,7 @@ public class KickCommand extends SQLBansCommand {
 
         final Player target = this.plugin.getPlayer(args[0]);
 
-        if ((target == null)) {
+        if (target == null) {
             sender.sendMessage(ChatColor.RED + "Could not find a player named " + args[0]);
             return true;
         }
@@ -55,7 +55,7 @@ public class KickCommand extends SQLBansCommand {
         final String kickAdmin = SQLBans.Messages.getIngameKicked(target.getName(), reason, sender.getName(), true);
         target.kick(SQLBans.Messages.getDisconnectKicked(reason, sender.getName()));
         for (final Player player : this.plugin.getOnlinePlayers()) {
-            if ((player != null)) {
+            if (player != null) {
                 if (player.hasPermission(Perm.MESSAGE_KICK_ADMIN)) {
                     player.sendMessage(kickAdmin);
                 } else if (player.hasPermission(Perm.MESSAGE_KICK_NORMAL)) {

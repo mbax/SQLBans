@@ -10,7 +10,8 @@ CREATE TABLE IF NOT EXISTS `%s` (
   `banlength` int(11) NOT NULL DEFAULT '0',
   `isbanned` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
-  KEY `info` (`info`),
+  KEY `username` (`username`),
+  KEY `ip` (`ip`),
   KEY `server` (`server`),
   KEY `type` (`type`)
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
