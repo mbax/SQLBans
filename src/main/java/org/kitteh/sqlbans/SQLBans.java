@@ -249,6 +249,9 @@ public final class SQLBans {
                 data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
                 this.banCache.addIP(data.getIP());
             }
+            if (isJoin) {
+                SQLHandler.logJoin(data.getName(), data.getIP());
+            }
         } catch (final Exception e) {
             data.disallow(UserData.Result.KICK_OTHER, "Connection error: Please retry.");
             this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
