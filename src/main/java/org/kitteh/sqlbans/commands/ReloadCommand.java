@@ -27,7 +27,7 @@ import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
-public class ReloadCommand extends SQLBansCommand {
+public final class ReloadCommand extends SQLBansCommand {
 
     private final SQLBans plugin;
 

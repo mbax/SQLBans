@@ -3,7 +3,7 @@ package org.kitteh.sqlbans.bukkit;
 import org.bukkit.command.CommandSender;
 import org.kitteh.sqlbans.Perm;
 
-public class BukkitSender implements org.kitteh.sqlbans.api.CommandSender {
+public final class BukkitSender implements org.kitteh.sqlbans.api.CommandSender {
 
     private final CommandSender sender;
 

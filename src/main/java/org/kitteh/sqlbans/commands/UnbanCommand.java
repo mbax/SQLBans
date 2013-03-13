@@ -33,7 +33,7 @@ import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class UnbanCommand extends SQLBansCommand {
+public final class UnbanCommand extends SQLBansCommand {
 
     public SQLBans plugin;
 

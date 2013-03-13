@@ -5,7 +5,7 @@ import net.md_5.bungee.api.plugin.Command;
 
 import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class BungeeCommand extends Command {
+public final class BungeeCommand extends Command {
 
     private final SQLBansCommand command;
 

@@ -19,7 +19,7 @@
  */
 package org.kitteh.sqlbans;
 
-public class Util {
+public final class Util {
 
     public static boolean isIP(String string) {
         final String[] split = string.split("\\.");

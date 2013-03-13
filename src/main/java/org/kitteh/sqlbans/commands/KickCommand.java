@@ -27,7 +27,7 @@ import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class KickCommand extends SQLBansCommand {
+public final class KickCommand extends SQLBansCommand {
 
     private final SQLBans plugin;
 

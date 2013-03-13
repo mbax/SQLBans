@@ -28,11 +28,11 @@ import java.util.logging.Level;
 import org.yaml.snakeyaml.Yaml;
 
 @SuppressWarnings("unchecked")
-public class Config {
+final class Config {
 
     private Map<String, Object> map = new LinkedHashMap<String, Object>();
 
-    public Config(SQLBans plugin) {
+    Config(SQLBans plugin) {
         final File configFile = new File(plugin.getDataFolder(), "config.yml");
         if (!configFile.exists()) {
             try {

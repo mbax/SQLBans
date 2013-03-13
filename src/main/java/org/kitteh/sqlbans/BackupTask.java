@@ -27,9 +27,9 @@ import java.util.Date;
 import java.util.Set;
 import java.util.logging.Level;
 
-public class BackupTask implements Runnable {
+final class BackupTask implements Runnable {
 
-    public static class BanItem {
+    final static class BanItem {
 
         private final String reason;
         private final String admin;
@@ -37,7 +37,7 @@ public class BackupTask implements Runnable {
         private final int length;
         private final String info;
 
-        public BanItem(String info, String admin, Date created, int length, String reason) {
+        BanItem(String info, String admin, Date created, int length, String reason) {
             this.info = info;
             this.admin = admin;
             this.created = created;
@@ -45,23 +45,23 @@ public class BackupTask implements Runnable {
             this.reason = reason;
         }
 
-        public String getAdmin() {
+        String getAdmin() {
             return this.admin;
         }
 
-        public Date getCreated() {
+        Date getCreated() {
             return this.created;
         }
 
-        public String getInfo() {
+        String getInfo() {
             return this.info;
         }
 
-        public int getLength() {
+        int getLength() {
             return this.length;
         }
 
-        public String getReason() {
+        String getReason() {
             return this.reason;
         }
     }
@@ -69,7 +69,7 @@ public class BackupTask implements Runnable {
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
     private final SQLBans sqlbans;
 
-    public BackupTask(SQLBans sqlbans) {
+    BackupTask(SQLBans sqlbans) {
         this.sqlbans = sqlbans;
     }
 

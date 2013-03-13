@@ -28,7 +28,7 @@ import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
-public class LookupCommand extends SQLBansCommand {
+public final class LookupCommand extends SQLBansCommand {
 
     private final SQLBans plugin;
 

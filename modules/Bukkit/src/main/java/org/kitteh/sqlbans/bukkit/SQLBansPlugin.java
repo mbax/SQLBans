@@ -9,7 +9,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.kitteh.sqlbans.UserData;
+import org.kitteh.sqlbans.SQLBansUserData;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.api.Player;
@@ -17,7 +17,7 @@ import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.api.SQLBansImplementation;
 import org.kitteh.sqlbans.api.Scheduler;
 
-public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, Listener {
+public final class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, Listener {
 
     private final Scheduler scheduler = new BukkitScheduler(this);
     private SQLBans sqlbans;
@@ -51,9 +51,9 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
     @Override
     public void onEnable() {
         this.sqlbans = new SQLBans(this);
-        final Set<UserData> attempts = new HashSet<UserData>();
+        final Set<SQLBansUserData> attempts = new HashSet<SQLBansUserData>();
         for (final org.bukkit.entity.Player player : this.getServer().getOnlinePlayers()) {
-            final UserData attempt = new UserData(player.getName(), player.getAddress().getAddress());
+            final SQLBansUserData attempt = new SQLBansUserData(player.getName(), player.getAddress().getAddress());
             attempts.add(attempt);
         }
         if (!attempts.isEmpty()) {
@@ -61,9 +61,9 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
                 @Override
                 public void run() {
                     final Map<String, String> kick = new HashMap<String, String>();
-                    for (final UserData attempt : attempts) {
+                    for (final SQLBansUserData attempt : attempts) {
                         SQLBansPlugin.this.sqlbans.processUserData(attempt, false);
-                        if (attempt.getResult() != UserData.Result.UNCHANGED) {
+                        if (attempt.getResult() != SQLBansUserData.Result.UNCHANGED) {
                             kick.put(attempt.getName(), attempt.getReason());
                         }
                     }
@@ -88,9 +88,9 @@ public class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, 
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        final UserData data = new UserData(event.getName(), event.getAddress());
+        final SQLBansUserData data = new SQLBansUserData(event.getName(), event.getAddress());
         this.sqlbans.processUserData(data, true);
-        if (data.getResult() != UserData.Result.UNCHANGED) {
+        if (data.getResult() != SQLBansUserData.Result.UNCHANGED) {
             AsyncPlayerPreLoginEvent.Result result;
             switch (data.getResult()) {
                 case KICK_BANNED:

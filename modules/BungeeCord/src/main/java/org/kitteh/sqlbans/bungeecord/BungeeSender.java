@@ -4,7 +4,7 @@ import net.md_5.bungee.api.CommandSender;
 
 import org.kitteh.sqlbans.Perm;
 
-public class BungeeSender implements org.kitteh.sqlbans.api.CommandSender {
+public final class BungeeSender implements org.kitteh.sqlbans.api.CommandSender {
 
     private final CommandSender sender;
 

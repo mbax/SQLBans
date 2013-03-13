@@ -9,7 +9,7 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import org.kitteh.sqlbans.UserData;
+import org.kitteh.sqlbans.SQLBansUserData;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.api.Player;
@@ -19,7 +19,7 @@ import org.kitteh.sqlbans.api.Scheduler;
 
 import com.google.common.eventbus.Subscribe;
 
-public class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementation {
+public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementation {
 
     private SQLBans sqlbans;
     private final Scheduler scheduler = new BungeeScheduler();
@@ -71,9 +71,9 @@ public class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementa
 
     @Subscribe
     public void onLogin(LoginEvent event) {
-        final UserData data = new UserData(event.getConnection().getName(), event.getConnection().getAddress().getAddress());
+        final SQLBansUserData data = new SQLBansUserData(event.getConnection().getName(), event.getConnection().getAddress().getAddress());
         this.sqlbans.processUserData(data, true);
-        if (data.getResult() != UserData.Result.UNCHANGED) {
+        if (data.getResult() != SQLBansUserData.Result.UNCHANGED) {
             event.setCancelled(true);
             event.setCancelReason(data.getReason());
         }

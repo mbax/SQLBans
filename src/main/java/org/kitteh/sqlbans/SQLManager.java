@@ -23,28 +23,28 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class SQLManager {
+final class SQLManager {
 
-    public class SQLConnection {
+    final class SQLConnection {
 
         private Connection connection;
         private final String url;
         private boolean inUse = false;
 
-        public SQLConnection(String url) throws SQLException {
+        SQLConnection(String url) throws SQLException {
             this.connection = DriverManager.getConnection(url);
             this.url = url;
         }
 
-        public Connection getConnection() {
+        Connection getConnection() {
             return this.connection;
         }
 
-        public boolean inUse() {
+        boolean inUse() {
             return this.inUse;
         }
 
-        public void myTurn() throws SQLException {
+        void myTurn() throws SQLException {
             if (this.connection.isValid(1)) {
                 this.connection.close();
                 this.connection = DriverManager.getConnection(this.url);
@@ -52,11 +52,11 @@ public class SQLManager {
             this.inUse = true;
         }
 
-        public void myWorkHereIsDone() {
+        void myWorkHereIsDone() {
             this.inUse = false;
         }
 
-        public void reset() throws SQLException {
+        void reset() throws SQLException {
             try {
                 this.connection.close();
             } catch (SQLException e) {
@@ -71,7 +71,7 @@ public class SQLManager {
 
     private final SQLConnection[] queryConnections = new SQLConnection[this.conCount];
 
-    public SQLManager(String url) throws ClassNotFoundException, SQLException {
+    SQLManager(String url) throws ClassNotFoundException, SQLException {
         Class.forName("com.mysql.jdbc.Driver");
         this.updateConnection = new SQLConnection(url);
         for (int x = 0; x < this.conCount; x++) {
@@ -79,7 +79,7 @@ public class SQLManager {
         }
     }
 
-    public synchronized SQLConnection getQueryConnection() throws SQLException {
+    synchronized SQLConnection getQueryConnection() throws SQLException {
         int i = 0;
         final long start = System.currentTimeMillis();
         SQLConnection con = null;
@@ -100,7 +100,7 @@ public class SQLManager {
         return con;
     }
 
-    public synchronized SQLConnection getUpdateConnection() throws SQLException {
+    synchronized SQLConnection getUpdateConnection() throws SQLException {
         final long start = System.currentTimeMillis();
         while (this.updateConnection.inUse()) {
             if ((System.currentTimeMillis() - 5000) > start) {

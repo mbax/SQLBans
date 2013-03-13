@@ -34,15 +34,16 @@ import java.util.logging.Logger;
 import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansImplementation;
 import org.kitteh.sqlbans.api.Scheduler;
+import org.kitteh.sqlbans.api.UserData;
 import org.kitteh.sqlbans.commands.BanCommand;
 import org.kitteh.sqlbans.commands.KickCommand;
 import org.kitteh.sqlbans.commands.ReloadCommand;
 import org.kitteh.sqlbans.commands.UnbanCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
-public class SQLBans {
+public final class SQLBans {
 
-    public static class Messages {
+    public final static class Messages {
 
         private static String COMMAND_NO_PERMISSION;
         private static String DISCONNECT_REJECTED;

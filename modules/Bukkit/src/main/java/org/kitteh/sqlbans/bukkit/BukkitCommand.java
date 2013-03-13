@@ -5,7 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 
-public class BukkitCommand implements CommandExecutor {
+public final class BukkitCommand implements CommandExecutor {
 
     private final SQLBansCommand command;
 

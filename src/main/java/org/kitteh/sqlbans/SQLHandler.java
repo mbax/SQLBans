@@ -33,7 +33,7 @@ import org.kitteh.sqlbans.BackupTask.BanItem;
 import org.kitteh.sqlbans.SQLManager.SQLConnection;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
 
-public class SQLHandler {
+public final class SQLHandler {
 
     private static SQLHandler instance = null;
     private static String banTableName;

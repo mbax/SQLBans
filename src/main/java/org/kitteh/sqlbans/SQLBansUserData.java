@@ -21,41 +21,42 @@ package org.kitteh.sqlbans;
 
 import java.net.InetAddress;
 
-public class UserData {
+import org.kitteh.sqlbans.api.UserData;
 
-    public enum Result {
-        UNCHANGED,
-        KICK_OTHER,
-        KICK_BANNED;
-    }
+public final class SQLBansUserData implements UserData {
 
     private Result result = Result.UNCHANGED;
     private final String name;
     private final InetAddress ip;
     private String reason = null;
 
-    public UserData(String name, InetAddress ip) {
+    public SQLBansUserData(String name, InetAddress ip) {
         this.name = name;
         this.ip = ip;
     }
 
+    @Override
     public void disallow(Result result, String reason) {
         this.result = result;
         this.reason = reason;
     }
 
+    @Override
     public InetAddress getIP() {
         return this.ip;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public String getReason() {
         return this.reason;
     }
 
+    @Override
     public Result getResult() {
         return this.result;
     }

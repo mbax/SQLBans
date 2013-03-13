@@ -17,18 +17,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.kitteh.sqlbans.exceptions;
+package org.kitteh.sqlbans.api;
 
-public final class SQLBansException extends Exception {
+import java.net.InetAddress;
 
-    private static final long serialVersionUID = 1L;
-
-    public SQLBansException(String string) {
-        super(string);
+public interface UserData {
+    
+    public enum Result {
+        UNCHANGED,
+        KICK_OTHER,
+        KICK_BANNED;
     }
+    
+    public void disallow(Result result, String reason);
 
-    public SQLBansException(String string, Throwable throwable) {
-        super(string, throwable);
-    }
+    public InetAddress getIP();
 
+    public String getName();
+
+    public String getReason();
+
+    public Result getResult();
 }

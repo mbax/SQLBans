@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import org.kitteh.sqlbans.api.Scheduler;
 
-public class BungeeScheduler implements Scheduler {
+public final class BungeeScheduler implements Scheduler {
 
     private final Timer timer = new Timer();
 

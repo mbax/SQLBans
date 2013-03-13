@@ -28,7 +28,7 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
-public class FishBans {
+public final class FishBans {
     public class UserData {
         public class BansData {
             public class ServicesData {
