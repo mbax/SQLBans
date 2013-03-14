@@ -7,15 +7,10 @@ import org.kitteh.sqlbans.api.Player;
 
 public final class BungeePlayer implements Player {
 
-    private ProxiedPlayer player;
+    private final ProxiedPlayer player;
 
     public BungeePlayer(ProxiedPlayer player) {
         this.player = player;
-    }
-
-    @Override
-    public void kick(String reason) {
-        this.player.disconnect(reason);
     }
 
     @Override
@@ -26,6 +21,11 @@ public final class BungeePlayer implements Player {
     @Override
     public boolean hasPermission(Perm permission) {
         return this.player.hasPermission(permission.toString());
+    }
+
+    @Override
+    public void kick(String reason) {
+        this.player.disconnect(reason);
     }
 
     @Override

@@ -59,7 +59,7 @@ final class SQLManager {
         void reset() throws SQLException {
             try {
                 this.connection.close();
-            } catch (SQLException e) {
+            } catch (final SQLException e) {
             }
             this.connection = DriverManager.getConnection(this.url);
             this.inUse = false;
@@ -88,7 +88,7 @@ final class SQLManager {
             if (!test.inUse()) {
                 con = test;
             }
-            if (!test.getConnection().isValid(1) || (System.currentTimeMillis() - 5000) > start) {
+            if (!test.getConnection().isValid(1) || ((System.currentTimeMillis() - 5000) > start)) {
                 test.reset();
                 con = test;
             }

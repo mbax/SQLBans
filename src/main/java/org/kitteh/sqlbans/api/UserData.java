@@ -22,13 +22,13 @@ package org.kitteh.sqlbans.api;
 import java.net.InetAddress;
 
 public interface UserData {
-    
+
     public enum Result {
         UNCHANGED,
         KICK_OTHER,
         KICK_BANNED;
     }
-    
+
     public void disallow(Result result, String reason);
 
     public InetAddress getIP();

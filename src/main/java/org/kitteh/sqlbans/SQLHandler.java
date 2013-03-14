@@ -35,22 +35,65 @@ import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public final class SQLHandler {
 
-    private static SQLHandler instance = null;
-    private static String banTableName;
-    private static String logTableName;
+    private String banTableName;
+    private String logTableName;
 
-    public static void banIP(InetAddress ip, String reason, String admin) throws SQLBansException, SQLException {
+    private SQLManager manager;
+
+    private SQLBans plugin;
+
+    public SQLHandler() throws SQLBansException {
+        throw new SQLBansException("Stop right there, criminal scum");
+    }
+
+    SQLHandler(SQLBans plugin, String host, int port, String user, String pass, String db, String banTableName, String logTableName, String tableCreate) throws SQLBansException {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+        } catch (final ClassNotFoundException e1) {
+            throw new SQLBansException("What on earth are you doing. This isn't CraftBukkit.");
+        }
+        this.plugin = plugin;
+        this.banTableName = banTableName;
+        this.logTableName = logTableName;
+        try {
+            this.manager = new SQLManager("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
+        } catch (final Exception e) {
+            throw new SQLBansException("SQL connection failure!", e);
+        }
+        try {
+            final SQLConnection con = this.manager.getQueryConnection();
+            final ResultSet bansExists = con.getConnection().getMetaData().getTables(null, null, this.banTableName, null);
+            final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, this.logTableName, null);
+            if (!bansExists.first() || !logsExists.first()) {
+                if (tableCreate != null) {
+                    final String[] split = tableCreate.split(";");
+                    for (final String statement : split) {
+                        if (statement.contains("CREATE")) {
+                            con.getConnection().createStatement().executeUpdate(statement);
+                        }
+                    }
+                } else {
+                    new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
+                }
+            }
+            con.myWorkHereIsDone();
+        } catch (final SQLException e) {
+            throw new SQLBansException("Failure while checking for table!", e);
+        }
+    }
+
+    void ban(InetAddress ip, String reason, String admin) throws SQLBansException, SQLException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getUpdateConnection();
+            con = this.manager.getUpdateConnection();
             final BanType type = BanType.IP;
-            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + SQLHandler.banTableName + "` (`ip`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
+            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.banTableName + "` (`ip`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
             statement.setBytes(1, ip.getAddress());
             statement.setInt(2, type.getID());
             statement.setString(3, reason);
             statement.setString(4, admin);
             statement.setTimestamp(5, new Timestamp(new Date().getTime()));
-            statement.setString(6, SQLHandler.instance().plugin.getServerName());
+            statement.setString(6, this.plugin.getServerName());
             statement.executeUpdate();
         } finally {
             try {
@@ -60,18 +103,18 @@ public final class SQLHandler {
         }
     }
 
-    public static void banName(String user, String reason, String admin) throws SQLBansException, SQLException {
+    void ban(String user, String reason, String admin) throws SQLBansException, SQLException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getUpdateConnection();
+            con = this.manager.getUpdateConnection();
             final BanType type = BanType.NAME;
-            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + SQLHandler.banTableName + "` (`username`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
+            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.banTableName + "` (`username`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
             statement.setString(1, user);
             statement.setInt(2, type.getID());
             statement.setString(3, reason);
             statement.setString(4, admin);
             statement.setTimestamp(5, new Timestamp(new Date().getTime()));
-            statement.setString(6, SQLHandler.instance().plugin.getServerName());
+            statement.setString(6, this.plugin.getServerName());
             statement.executeUpdate();
         } finally {
             try {
@@ -81,11 +124,11 @@ public final class SQLHandler {
         }
     }
 
-    public static boolean canJoin(InetAddress address) throws SQLBansException, SQLException {
+    boolean canJoin(InetAddress address) throws SQLBansException, SQLException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getQueryConnection();
-            final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + SQLHandler.banTableName + "` WHERE `ip` = ? AND `isbanned` = 1");
+            con = this.manager.getQueryConnection();
+            final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `ip` = ? AND `isbanned` = 1");
             banQuery.setBytes(1, address.getAddress());
             final boolean ret = !banQuery.executeQuery().first();
             return ret;
@@ -97,11 +140,11 @@ public final class SQLHandler {
         }
     }
 
-    public static boolean canJoin(String name) throws SQLBansException, SQLException {
+    boolean canJoin(String name) throws SQLBansException, SQLException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getQueryConnection();
-            final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + SQLHandler.banTableName + "` WHERE `username` = ? AND `isbanned` = 1");
+            con = this.manager.getQueryConnection();
+            final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `username` = ? AND `isbanned` = 1");
             banQuery.setString(1, name);
             final boolean ret = !banQuery.executeQuery().first();
             return ret;
@@ -113,12 +156,12 @@ public final class SQLHandler {
         }
     }
 
-    public static Set<BanItem> getAllBans(BanType type) throws SQLException, SQLBansException {
+    Set<BanItem> getAllBans(BanType type) throws SQLException, SQLBansException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getQueryConnection();
+            con = this.manager.getQueryConnection();
             final Set<BanItem> list = new HashSet<BanItem>();
-            final PreparedStatement statement = con.getConnection().prepareStatement("SELECT `" + (type == BanType.NAME ? "username" : "ip") + "`,`reason`,`admin`,`timestamp`,`banlength` FROM `" + SQLHandler.banTableName + "` WHERE `type` = ? AND `isbanned` = 1");
+            final PreparedStatement statement = con.getConnection().prepareStatement("SELECT `" + (type == BanType.NAME ? "username" : "ip") + "`,`reason`,`admin`,`timestamp`,`banlength` FROM `" + this.banTableName + "` WHERE `type` = ? AND `isbanned` = 1");
             statement.setInt(1, type.getID());
             final ResultSet result = statement.executeQuery();
             while (result.next()) {
@@ -144,14 +187,14 @@ public final class SQLHandler {
         }
     }
 
-    public static void logJoin(String name, InetAddress address) throws SQLException, SQLBansException {
+    void logJoin(String name, InetAddress address) throws SQLException, SQLBansException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getUpdateConnection();
-            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + SQLHandler.logTableName + "` (`username`,`ip`,`server`) VALUES (?,?,?);");
+            con = this.manager.getUpdateConnection();
+            final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.logTableName + "` (`username`,`ip`,`server`) VALUES (?,?,?);");
             statement.setString(1, name);
             statement.setBytes(2, address.getAddress());
-            statement.setString(3, SQLHandler.instance().plugin.getServerName());
+            statement.setString(3, this.plugin.getServerName());
             statement.executeUpdate();
         } finally {
             try {
@@ -161,29 +204,11 @@ public final class SQLHandler {
         }
     }
 
-    public static void nullifyInstance() {
-        SQLHandler.instance = null;
-    }
-
-    public static void start(SQLBans plugin, String host, int port, String user, String pass, String db, String banTableName, String logTableName, String tableCreate) throws SQLBansException {
-        if (SQLHandler.instance != null) {
-            throw new SQLBansException("Thread already running! Something has gone terribly wrong!");
-        }
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-        } catch (final ClassNotFoundException e1) {
-            throw new SQLBansException("What on earth are you doing. This isn't CraftBukkit.");
-        }
-        SQLHandler.instance = new SQLHandler(plugin, host, port, user, pass, db, tableCreate);
-        SQLHandler.banTableName = banTableName;
-        SQLHandler.logTableName = logTableName;
-    }
-
-    public static void unban(InetAddress address) throws SQLException, SQLBansException {
+    void unban(InetAddress address) throws SQLException, SQLBansException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getUpdateConnection();
-            final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + SQLHandler.banTableName + "` SET `isbanned` = 0 WHERE `ip` = ?");
+            con = this.manager.getUpdateConnection();
+            final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + this.banTableName + "` SET `isbanned` = 0 WHERE `ip` = ?");
             statement.setBytes(1, address.getAddress());
             statement.executeUpdate();
         } finally {
@@ -194,11 +219,11 @@ public final class SQLHandler {
         }
     }
 
-    public static void unban(String user) throws SQLBansException, SQLException {
+    void unban(String user) throws SQLBansException, SQLException {
         SQLConnection con = null;
         try {
-            con = SQLHandler.instance().manager.getUpdateConnection();
-            final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + SQLHandler.banTableName + "` SET `isbanned` = 0 WHERE `username` = ?");
+            con = this.manager.getUpdateConnection();
+            final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + this.banTableName + "` SET `isbanned` = 0 WHERE `username` = ?");
             statement.setString(1, user);
             statement.executeUpdate();
         } finally {
@@ -206,50 +231,6 @@ public final class SQLHandler {
                 con.myWorkHereIsDone();
             } catch (final Exception e) {
             }
-        }
-    }
-
-    private static SQLHandler instance() throws SQLBansException {
-        if (SQLHandler.instance == null) {
-            throw new SQLBansException("Not loaded!");
-        }
-        return SQLHandler.instance;
-    }
-
-    private SQLManager manager;
-
-    private SQLBans plugin;
-
-    public SQLHandler() throws SQLBansException {
-        throw new SQLBansException("Stop right there, criminal scum");
-    }
-
-    private SQLHandler(SQLBans plugin, String host, int port, String user, String pass, String db, String tableCreate) throws SQLBansException {
-        this.plugin = plugin;
-        try {
-            this.manager = new SQLManager("jdbc:mysql://" + host + ":" + port + "/" + db + "?autoReconnect=true&user=" + user + "&password=" + pass);
-        } catch (final Exception e) {
-            throw new SQLBansException("SQL connection failure!", e);
-        }
-        try {
-            final SQLConnection con = this.manager.getQueryConnection();
-            final ResultSet bansExists = con.getConnection().getMetaData().getTables(null, null, SQLHandler.banTableName, null);
-            final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, SQLHandler.logTableName, null);
-            if (!bansExists.first() || !logsExists.first()) {
-                if (tableCreate != null) {
-                    String[] split = tableCreate.split(";");
-                    for (String statement : split) {
-                        if (statement.contains("CREATE")) {
-                            con.getConnection().createStatement().executeUpdate(statement);
-                        }
-                    }
-                } else {
-                    new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
-                }
-            }
-            con.myWorkHereIsDone();
-        } catch (final SQLException e) {
-            throw new SQLBansException("Failure while checking for table!", e);
         }
     }
 }

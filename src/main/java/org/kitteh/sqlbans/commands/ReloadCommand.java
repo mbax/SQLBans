@@ -22,7 +22,6 @@ package org.kitteh.sqlbans.commands;
 import org.kitteh.sqlbans.ChatColor;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
-import org.kitteh.sqlbans.SQLHandler;
 import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.exceptions.SQLBansException;
@@ -38,7 +37,6 @@ public final class ReloadCommand extends SQLBansCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        SQLHandler.nullifyInstance();
         try {
             this.plugin.load();
             this.plugin.sendMessage(Perm.MESSAGE_RELOAD, ChatColor.AQUA.toString() + sender.getName() + " reloaded SQLBans");

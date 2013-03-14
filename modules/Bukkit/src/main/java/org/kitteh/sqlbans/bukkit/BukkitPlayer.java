@@ -12,11 +12,6 @@ public final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
     }
 
     @Override
-    public void kick(String reason) {
-        this.player.kickPlayer(reason);
-    }
-
-    @Override
     public String getName() {
         return this.player.getName();
     }
@@ -24,6 +19,11 @@ public final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
     @Override
     public boolean hasPermission(Perm permission) {
         return this.player.hasPermission(permission.toString());
+    }
+
+    @Override
+    public void kick(String reason) {
+        this.player.kickPlayer(reason);
     }
 
     @Override

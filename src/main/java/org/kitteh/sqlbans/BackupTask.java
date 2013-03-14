@@ -67,10 +67,10 @@ final class BackupTask implements Runnable {
     }
 
     private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-    private final SQLBans sqlbans;
+    private final SQLBans plugin;
 
-    BackupTask(SQLBans sqlbans) {
-        this.sqlbans = sqlbans;
+    BackupTask(SQLBans plugin) {
+        this.plugin = plugin;
     }
 
     @Override
@@ -78,17 +78,17 @@ final class BackupTask implements Runnable {
         for (final BanType type : BanType.values()) {
             Set<BanItem> set = null;
             try {
-                set = SQLHandler.getAllBans(type);
+                set = this.plugin.getSQL().getAllBans(type);
             } catch (final Exception e) {
-                this.sqlbans.getLogger().log(Level.SEVERE, "Could not acquire " + type.getName() + " bans for backup", e);
+                this.plugin.getLogger().log(Level.SEVERE, "Could not acquire " + type.getName() + " bans for backup", e);
             }
             if ((set == null) || set.isEmpty()) {
                 continue;
             }
             try {
-                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.sqlbans.getDataFolder(), "backup-" + type.getName() + "s.txt"), false));
+                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.plugin.getDataFolder(), "backup-" + type.getName() + "s.txt"), false));
 
-                writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.sqlbans.getVersion());
+                writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.plugin.getVersion());
                 writer.println("# victim name | ban date | banned by | banned until | reason");
                 writer.println();
 
@@ -112,7 +112,7 @@ final class BackupTask implements Runnable {
                 }
                 writer.close();
             } catch (final Exception e) {
-                this.sqlbans.getLogger().log(Level.SEVERE, "Could not save " + type.getName() + " ban list", e);
+                this.plugin.getLogger().log(Level.SEVERE, "Could not save " + type.getName() + " ban list", e);
             }
         }
     }

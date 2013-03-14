@@ -9,9 +9,9 @@ import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
 
-import org.kitteh.sqlbans.SQLBansUserData;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
+import org.kitteh.sqlbans.SQLBansUserData;
 import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.api.SQLBansImplementation;

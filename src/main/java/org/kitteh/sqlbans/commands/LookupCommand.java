@@ -23,10 +23,8 @@ import org.kitteh.sqlbans.ChatColor;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLBans.Messages;
-import org.kitteh.sqlbans.SQLHandler;
 import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.SQLBansCommand;
-import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public final class LookupCommand extends SQLBansCommand {
 
@@ -39,13 +37,13 @@ public final class LookupCommand extends SQLBansCommand {
 
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
-        boolean bans = sender.hasPermission(Perm.COMMAND_LOOKUP_BANS);
-        boolean ips = sender.hasPermission(Perm.COMMAND_LOOKUP_IPS);
+        final boolean bans = sender.hasPermission(Perm.COMMAND_LOOKUP_BANS);
+        final boolean ips = sender.hasPermission(Perm.COMMAND_LOOKUP_IPS);
         if (args.length == 0) { // Usage
             if (!bans && !ips) {
                 sender.sendMessage(Messages.getCommandNoPermission());
             } else {
-                StringBuilder builder = new StringBuilder();
+                final StringBuilder builder = new StringBuilder();
                 builder.append(ChatColor.AQUA).append("Usage: ").append(this.getName());
                 if (bans) {
                     builder.append("[bans");
@@ -58,7 +56,7 @@ public final class LookupCommand extends SQLBansCommand {
             return true;
         }
         if (bans && args[0].equalsIgnoreCase("bans")) {
-            if(args.length==1){
+            if (args.length == 1) {
                 // TODO
             }
         } else if (ips && args[0].equalsIgnoreCase("ips")) {

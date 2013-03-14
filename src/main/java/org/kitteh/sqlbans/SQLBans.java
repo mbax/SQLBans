@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
@@ -133,12 +134,10 @@ public final class SQLBans {
     }
 
     private final BanCache banCache = new BanCache(this);
-
     private Config config;
-
     private final SQLBansImplementation implementation;
-
     private String serverName;
+    private SQLHandler sql;
 
     public SQLBans(SQLBansImplementation implementation) {
         this.implementation = implementation;
@@ -158,6 +157,36 @@ public final class SQLBans {
         this.getScheduler().repeatingTask(new BackupTask(this), 5, 300);
 
         this.implementation.registerLoginAttemptListening();
+    }
+
+    public void banIP(final InetAddress address, final String reason, final String admin) {
+        this.getScheduler().run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SQLBans.this.sql.ban(address, reason, admin);
+                    SQLBans.this.banCache.addIP(address);
+                } catch (final Exception e) {
+                    SQLBans.this.getLogger().log(Level.SEVERE, "Could not ban " + address.getHostAddress(), e);
+                    SQLBans.this.sendMessage(Perm.MESSAGE_BAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to ban " + address.getHostAddress());
+                }
+            }
+        });
+    }
+
+    public void banName(final String name, final String reason, final String admin) {
+        this.getScheduler().run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SQLBans.this.sql.ban(name, reason, admin);
+                    SQLBans.this.banCache.addName(name);
+                } catch (final Exception e) {
+                    SQLBans.this.getLogger().log(Level.SEVERE, "Could not ban " + name, e);
+                    SQLBans.this.sendMessage(Perm.MESSAGE_BAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to ban " + name);
+                }
+            }
+        });
     }
 
     public BanCache getBanCache() {
@@ -227,7 +256,7 @@ public final class SQLBans {
             new SQLBansException("Could not load default table creation text", e).printStackTrace();
         }
         try {
-            SQLHandler.start(this, host, port, user, pass, db, bansTableName, logTableName, tableCreate);
+            this.sql = new SQLHandler(this, host, port, user, pass, db, bansTableName, logTableName, tableCreate);
         } catch (final SQLBansException e) {
             this.getLogger().log(Level.SEVERE, "Failure to load, shutting down", e);
             this.implementation.shutdown();
@@ -241,16 +270,16 @@ public final class SQLBans {
             return;
         }
         try {
-            if (!SQLHandler.canJoin(data.getName())) {
+            if (!this.sql.canJoin(data.getName())) {
                 data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
                 this.banCache.addName(data.getName());
             }
-            if (!SQLHandler.canJoin(data.getIP())) {
+            if (!this.sql.canJoin(data.getIP())) {
                 data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
                 this.banCache.addIP(data.getIP());
             }
             if (isJoin) {
-                SQLHandler.logJoin(data.getName(), data.getIP());
+                this.sql.logJoin(data.getName(), data.getIP());
             }
         } catch (final Exception e) {
             data.disallow(UserData.Result.KICK_OTHER, "Connection error: Please retry.");
@@ -294,5 +323,39 @@ public final class SQLBans {
 
     public void sendMessage(Perm permission, String message) {
         this.implementation.sendMessage(permission, message);
+    }
+
+    public void unbanIP(final InetAddress address) {
+        this.getScheduler().run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SQLBans.this.sql.unban(address);
+                    SQLBans.this.banCache.removeIP(address);
+                } catch (final Exception e) {
+                    SQLBans.this.getLogger().log(Level.SEVERE, "Could not unban " + address.getHostAddress(), e);
+                    SQLBans.this.sendMessage(Perm.MESSAGE_UNBAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to unban " + address.getHostAddress());
+                }
+            }
+        });
+    }
+
+    public void unbanName(final String name) {
+        this.getScheduler().run(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    SQLBans.this.sql.unban(name);
+                    SQLBans.this.banCache.removeName(name);
+                } catch (final Exception e) {
+                    SQLBans.this.getLogger().log(Level.SEVERE, "Could not unban " + name, e);
+                    SQLBans.this.sendMessage(Perm.MESSAGE_UNBAN_ADMIN, ChatColor.RED + "[SQLBans] Failed to unban " + name);
+                }
+            }
+        });
+    }
+
+    SQLHandler getSQL() {
+        return this.sql;
     }
 }
