@@ -1,6 +1,5 @@
 package org.kitteh.sqlbans.bungeecord;
 
-import java.io.File;
 import java.util.logging.Logger;
 
 import net.md_5.bungee.api.ProxyServer;
@@ -23,12 +22,6 @@ public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImpl
 
     private SQLBans sqlbans;
     private final Scheduler scheduler = new BungeeScheduler();
-    private final File pluginDir = new File("plugins/SQLBans");
-
-    @Override
-    public File getDataFolder() {
-        return this.pluginDir;
-    }
 
     @Override
     public Logger getLogger() {
@@ -81,12 +74,12 @@ public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImpl
 
     @Override
     public void registerCommand(SQLBansCommand command) {
-        ProxyServer.getInstance().getPluginManager().registerCommand(new BungeeCommand(command));
+        ProxyServer.getInstance().getPluginManager().registerCommand(this, new BungeeCommand(command));
     }
 
     @Override
     public void registerLoginAttemptListening() {
-        ProxyServer.getInstance().getPluginManager().registerListener(this);
+        ProxyServer.getInstance().getPluginManager().registerListener(this, this);
     }
 
     @Override
