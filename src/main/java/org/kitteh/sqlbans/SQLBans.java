@@ -143,7 +143,7 @@ public final class SQLBans {
         this.implementation = implementation;
 
         try {
-            this.load();
+            this.reload();
         } catch (final SQLBansException e) {
             return;
         }
@@ -227,7 +227,13 @@ public final class SQLBans {
         return this.implementation.getVersion();
     }
 
-    public void load() throws SQLBansException {
+    /**
+     * Reload configuration and restart SQL connection
+     * Called on startup and in reload command
+     * 
+     * @throws SQLBansException
+     */
+    public void reload() throws SQLBansException {
         this.config = new Config(this);
         SQLBans.Messages.load(this.config);
         this.serverName = this.config.getString("server-name");

@@ -38,7 +38,7 @@ public final class ReloadCommand extends SQLBansCommand {
     @Override
     public boolean onCommand(CommandSender sender, String[] args) {
         try {
-            this.plugin.load();
+            this.plugin.reload();
             this.plugin.sendMessage(Perm.MESSAGE_RELOAD, ChatColor.AQUA.toString() + sender.getName() + " reloaded SQLBans");
             this.plugin.getLogger().info(sender.getName() + " reloaded SQLBans");
         } catch (final SQLBansException e) {
