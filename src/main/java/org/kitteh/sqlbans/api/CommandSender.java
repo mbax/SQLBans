@@ -21,11 +21,33 @@ package org.kitteh.sqlbans.api;
 
 import org.kitteh.sqlbans.Perm;
 
+/**
+ * A command sender.
+ */
 public interface CommandSender {
 
+    /**
+     * Get the name of the CommandSender
+     * If a Player, this is their username
+     * 
+     * @return the sender's name
+     */
     public String getName();
 
+    /**
+     * Get if a CommandSender has a permission
+     * 
+     * @param permission
+     *            Permission to check
+     * @return true if the CommandSender has the permission
+     */
     public boolean hasPermission(Perm permission);
 
+    /**
+     * Send the CommandSender a message
+     * 
+     * @param message
+     *            Message to send
+     */
     public void sendMessage(String message);
 }

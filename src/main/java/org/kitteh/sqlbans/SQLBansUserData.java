@@ -23,6 +23,9 @@ import java.net.InetAddress;
 
 import org.kitteh.sqlbans.api.UserData;
 
+/**
+ * Default UserData implementation. Methods have no immediate effect.
+ */
 public final class SQLBansUserData implements UserData {
 
     private Result result = Result.UNCHANGED;

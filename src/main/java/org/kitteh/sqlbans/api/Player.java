@@ -19,7 +19,16 @@
  */
 package org.kitteh.sqlbans.api;
 
+/**
+ * A Player
+ */
 public interface Player extends CommandSender {
 
+    /**
+     * Kick the Player
+     * 
+     * @param reason
+     *            Reason to send when kicking
+     */
     public void kick(String reason);
 }

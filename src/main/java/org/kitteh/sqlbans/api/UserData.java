@@ -21,21 +21,61 @@ package org.kitteh.sqlbans.api;
 
 import java.net.InetAddress;
 
+/**
+ * Class for tracking a user's ability to join
+ */
 public interface UserData {
 
     public enum Result {
+        /**
+         * Default state
+         */
         UNCHANGED,
+        /**
+         * Kicked for any reason not specified by another Result
+         */
         KICK_OTHER,
+        /**
+         * Kicked because banned
+         */
         KICK_BANNED;
     }
 
+    /**
+     * Disallow the player from joining
+     * 
+     * @param result
+     *            Result for the player
+     * @param reason
+     *            Reason to display to the user
+     */
     public void disallow(Result result, String reason);
 
+    /**
+     * Get the player's IP
+     * 
+     * @return InetAddress of the player
+     */
     public InetAddress getIP();
 
+    /**
+     * Get the player's name
+     * 
+     * @return Username of the player
+     */
     public String getName();
 
+    /**
+     * Get the reason for the player being denied
+     * 
+     * @return kick reason or null if none.
+     */
     public String getReason();
 
+    /**
+     * Get the result of the join attempt
+     * 
+     * @return Result of the attempt
+     */
     public Result getResult();
 }

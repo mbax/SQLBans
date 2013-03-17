@@ -19,6 +19,10 @@
  */
 package org.kitteh.sqlbans;
 
+/**
+ * Permissions for the plugin.
+ * The toString method provides the String form (sqlbans.perm.node)
+ */
 public enum Perm {
 
     /* Commands */

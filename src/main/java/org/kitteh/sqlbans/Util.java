@@ -19,8 +19,17 @@
  */
 package org.kitteh.sqlbans;
 
+/**
+ * Happy utility methods for happy people
+ */
 public final class Util {
 
+    /**
+     * Check if the submitted String is a valid IP address
+     * 
+     * @param string
+     * @return
+     */
     public static boolean isIP(String string) {
         final String[] split = string.split("\\.");
         if (split.length == 4) {
@@ -39,20 +48,61 @@ public final class Util {
         return false;
     }
 
+    /**
+     * If null, throw IllegalArgumentException (*name* may not be null)
+     * 
+     * @param check
+     *            Object to check
+     * @param name
+     *            Name of the object
+     */
     public static void nullCheck(Object check, String name) {
         if (check == null) {
             throw new IllegalArgumentException(name + " may not be null");
         }
     }
 
+    /**
+     * Combine String array with separator
+     * 
+     * @param args
+     *            String array
+     * @param separator
+     *            Separator
+     * @return combined String
+     */
     public static String separatistsUnite(String[] args, String separator) {
         return Util.separatistsUnite(args, separator, 0, args.length - 1);
     }
 
+    /**
+     * Combine String array with separator, starting at defined index
+     * 
+     * @param args
+     *            String array
+     * @param separator
+     *            Separator
+     * @param start
+     *            Starting index
+     * @return combined String
+     */
     public static String separatistsUnite(String[] args, String separator, int start) {
         return Util.separatistsUnite(args, separator, start, args.length - 1);
     }
 
+    /**
+     * Combine String array with separator, starting and ending at defined indices
+     * 
+     * @param args
+     *            String array
+     * @param separator
+     *            Separator
+     * @param start
+     *            Starting index
+     * @param end
+     *            Ending index
+     * @return combined String
+     */
     public static String separatistsUnite(String[] args, String separator, int start, int end) {
         final StringBuilder builder = new StringBuilder();
         if (start < 0) {

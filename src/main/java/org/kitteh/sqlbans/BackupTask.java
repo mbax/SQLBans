@@ -80,13 +80,13 @@ final class BackupTask implements Runnable {
             try {
                 set = this.plugin.getSQL().getAllBans(type);
             } catch (final Exception e) {
-                this.plugin.getLogger().log(Level.SEVERE, "Could not acquire " + type.getName() + " bans for backup", e);
+                this.plugin.getLogger().log(Level.SEVERE, "Could not acquire " + type + " bans for backup", e);
             }
             if ((set == null) || set.isEmpty()) {
                 continue;
             }
             try {
-                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.plugin.getDataFolder(), "backup-" + type.getName() + "s.txt"), false));
+                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.plugin.getDataFolder(), "backup-" + type + "s.txt"), false));
 
                 writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.plugin.getVersion());
                 writer.println("# victim name | ban date | banned by | banned until | reason");
@@ -112,7 +112,7 @@ final class BackupTask implements Runnable {
                 }
                 writer.close();
             } catch (final Exception e) {
-                this.plugin.getLogger().log(Level.SEVERE, "Could not save " + type.getName() + " ban list", e);
+                this.plugin.getLogger().log(Level.SEVERE, "Could not save " + type + " ban list", e);
             }
         }
     }

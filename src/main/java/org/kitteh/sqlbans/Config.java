@@ -57,7 +57,7 @@ final class Config {
         }
     }
 
-    public int getInt(String string) {
+    int getInt(String string) {
         final String s = this.get(string).toString();
         try {
             return Integer.parseInt(s);
@@ -66,7 +66,7 @@ final class Config {
         }
     }
 
-    public String getString(String string) {
+    String getString(String string) {
         final Object o = this.get(string);
         if (o instanceof String) {
             return (String) o;
@@ -74,7 +74,7 @@ final class Config {
         return null;
     }
 
-    public String getString(String string, String def) {
+    String getString(String string, String def) {
         final String result = this.getString(string);
         if (result == null) {
             return def;

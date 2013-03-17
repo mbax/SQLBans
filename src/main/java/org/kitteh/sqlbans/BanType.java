@@ -19,9 +19,18 @@
  */
 package org.kitteh.sqlbans;
 
+/**
+ * Types of bans available
+ */
 public enum BanType {
 
+    /**
+     * Username bans
+     */
     NAME("player", 0),
+    /**
+     * IP address bans
+     */
     IP("ip", 1);
 
     private final int id;
@@ -32,11 +41,17 @@ public enum BanType {
         this.name = name;
     }
 
+    /**
+     * Get the internal int ID of the ban type, used in SQL
+     * 
+     * @return the internal ban type ID
+     */
     public int getID() {
         return this.id;
     }
 
-    public String getName() {
+    @Override
+    public String toString() {
         return this.name;
     }
 }

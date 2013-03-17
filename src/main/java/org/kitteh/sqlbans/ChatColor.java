@@ -19,6 +19,9 @@
  */
 package org.kitteh.sqlbans;
 
+/**
+ * Chat colors
+ */
 public enum ChatColor {
 
     BLACK('0'),

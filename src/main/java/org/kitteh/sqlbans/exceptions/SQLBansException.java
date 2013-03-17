@@ -19,14 +19,31 @@
  */
 package org.kitteh.sqlbans.exceptions;
 
+/**
+ * Something has gone horribly wrong
+ */
 public final class SQLBansException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
+    /**
+     * Something has gone wrong with a message
+     * 
+     * @param string
+     *            Message
+     */
     public SQLBansException(String string) {
         super(string);
     }
 
+    /**
+     * Something has gone wrong with message and a throwable
+     * 
+     * @param string
+     *            Message
+     * @param throwable
+     *            Further wrongness
+     */
     public SQLBansException(String string, Throwable throwable) {
         super(string, throwable);
     }

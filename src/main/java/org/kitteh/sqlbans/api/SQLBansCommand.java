@@ -22,6 +22,9 @@ package org.kitteh.sqlbans.api;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans.Messages;
 
+/**
+ * A command
+ */
 public abstract class SQLBansCommand {
 
     private final String[] aliases;
@@ -34,18 +37,44 @@ public abstract class SQLBansCommand {
         this.aliases = aliases;
     }
 
+    /**
+     * Get potential aliases of the command
+     * Can be null/empty for no aliases
+     * 
+     * @return an array of potential aliases
+     */
     public String[] getAliases() {
         return this.aliases;
     }
 
+    /**
+     * Get the primary name of the command
+     * 
+     * @return the primary name
+     */
     public String getName() {
         return this.name;
     }
 
+    /**
+     * Get the permission required to call the command
+     * Can be null if no permission required
+     * 
+     * @return the permission required
+     */
     public Perm getPermission() {
         return this.permission;
     }
 
+    /**
+     * Process the command
+     * 
+     * @param sender
+     *            Command sender
+     * @param args
+     *            Arguments sent in the command
+     * @return true if processed
+     */
     public boolean processCommand(CommandSender sender, String[] args) {
         if ((this.permission != null) && !sender.hasPermission(this.permission)) {
             sender.sendMessage(Messages.getCommandNoPermission());
