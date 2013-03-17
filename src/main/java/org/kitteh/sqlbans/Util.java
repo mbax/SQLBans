@@ -39,6 +39,12 @@ public final class Util {
         return false;
     }
 
+    public static void nullCheck(Object check, String name) {
+        if (check == null) {
+            throw new IllegalArgumentException(name + " may not be null");
+        }
+    }
+
     public static String separatistsUnite(String[] args, String separator) {
         return Util.separatistsUnite(args, separator, 0, args.length - 1);
     }

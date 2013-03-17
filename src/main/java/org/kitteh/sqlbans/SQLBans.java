@@ -139,6 +139,12 @@ public final class SQLBans {
     private String serverName;
     private SQLHandler sql;
 
+    /**
+     * If you start me up, I'll never stop
+     * But really, please only initialize me once.
+     * 
+     * @param implementation
+     */
     public SQLBans(SQLBansImplementation implementation) {
         this.implementation = implementation;
 
@@ -159,7 +165,20 @@ public final class SQLBans {
         this.implementation.registerLoginAttemptListening();
     }
 
+    /**
+     * Ban an IP address.
+     * 
+     * @param address
+     *            InetAddress to ban
+     * @param reason
+     *            Reason for the ban
+     * @param admin
+     *            Who banned the user. 16 character limit
+     */
     public void banIP(final InetAddress address, final String reason, final String admin) {
+        Util.nullCheck(address, "IP Address");
+        Util.nullCheck(reason, "Ban reason");
+        Util.nullCheck(admin, "Admin");
         this.getScheduler().run(new Runnable() {
             @Override
             public void run() {
@@ -174,7 +193,20 @@ public final class SQLBans {
         });
     }
 
+    /**
+     * Ban a username.
+     * 
+     * @param name
+     *            Username to ban
+     * @param reason
+     *            Reason for the ban
+     * @param admin
+     *            Who banned the user. 16 character limit
+     */
     public void banName(final String name, final String reason, final String admin) {
+        Util.nullCheck(name, "Username");
+        Util.nullCheck(reason, "Ban reason");
+        Util.nullCheck(admin, "Admin");
         this.getScheduler().run(new Runnable() {
             @Override
             public void run() {
@@ -189,23 +221,47 @@ public final class SQLBans {
         });
     }
 
-    public File getDataFolder() {
-        return this.implementation.getDataFolder();
-    }
-
+    /**
+     * Get the Logger
+     * 
+     * @return the current implementation's logger
+     */
     public Logger getLogger() {
         return this.implementation.getLogger();
     }
 
+    /**
+     * Get an array of online players
+     * 
+     * @return online Players from the implementation
+     */
     public Player[] getOnlinePlayers() {
         return this.implementation.getOnlinePlayers();
     }
 
+    /**
+     * Get a Player by name
+     * 
+     * @param name
+     *            Username queried
+     * @return Player from the implementation
+     */
     public Player getPlayer(String name) {
+        Util.nullCheck(name, "Player name");
         return this.implementation.getPlayer(name);
     }
 
+    /**
+     * Get an InputStream of a file by path
+     * 
+     * @param path
+     *            Path to the file
+     * @return InputStream for the file or null if not found
+     * @throws IOException
+     *             If something goes terribly wrong
+     */
     public InputStream getResource(String path) throws IOException {
+        Util.nullCheck(path, "Resource path");
         final URL url = this.getClass().getClassLoader().getResource(path);
         if (url == null) {
             return null;
@@ -215,16 +271,64 @@ public final class SQLBans {
         return urlConnection.getInputStream();
     }
 
+    /**
+     * Get the Scheduler
+     * 
+     * @return the implementation's scheduler
+     */
     public Scheduler getScheduler() {
         return this.implementation.getScheduler();
     }
 
+    /**
+     * Get the current server name as defined in config
+     * 
+     * @return the current server name
+     */
     public String getServerName() {
         return this.serverName;
     }
 
+    /**
+     * Get the current SQLBans version
+     * 
+     * @return the implementation's stored version
+     */
     public String getVersion() {
         return this.implementation.getVersion();
+    }
+
+    /**
+     * Process if a user may join the server, by username and IP
+     * Sets the Result of the UserData and a disconnect reason
+     * 
+     * @param data
+     *            UserData which will be processed
+     * @param isJoin
+     *            Set to true to indicate this is an actual join attempt, to log the username/IP
+     */
+    public void processUserData(UserData data, boolean isJoin) {
+        Util.nullCheck(data, "UserData");
+        if (this.banCache.containsName(data.getName()) || this.banCache.containsIP(data.getIP())) {
+            data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+            return;
+        }
+        try {
+            if (!this.sql.canJoin(data.getName())) {
+                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+                this.banCache.addName(data.getName());
+            }
+            if (!this.sql.canJoin(data.getIP())) {
+                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
+                this.banCache.addIP(data.getIP());
+            }
+            if (isJoin) {
+                this.sql.logJoin(data.getName(), data.getIP());
+            }
+        } catch (final Exception e) {
+            data.disallow(UserData.Result.KICK_OTHER, "Connection error: Please retry.");
+            this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
+        }
     }
 
     /**
@@ -266,30 +370,20 @@ public final class SQLBans {
         }
     }
 
-    public void processUserData(UserData data, boolean isJoin) {
-        if (this.banCache.containsName(data.getName()) || this.banCache.containsIP(data.getIP())) {
-            data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
-            return;
-        }
-        try {
-            if (!this.sql.canJoin(data.getName())) {
-                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
-                this.banCache.addName(data.getName());
-            }
-            if (!this.sql.canJoin(data.getIP())) {
-                data.disallow(UserData.Result.KICK_BANNED, SQLBans.Messages.getDisconnectRejected());
-                this.banCache.addIP(data.getIP());
-            }
-            if (isJoin) {
-                this.sql.logJoin(data.getName(), data.getIP());
-            }
-        } catch (final Exception e) {
-            data.disallow(UserData.Result.KICK_OTHER, "Connection error: Please retry.");
-            this.getLogger().log(Level.SEVERE, "Severe error on user connect", e);
-        }
-    }
-
+    /**
+     * Save a resource to the plugin folder, by path
+     * 
+     * @param path
+     *            Path to the local resource
+     * @param replace
+     *            If true, overwrite on save
+     * @throws IOException
+     *             If something goes horribly wrong
+     * @throws SQLBansException
+     *             If the resource doesn't exist to begin with
+     */
     public void saveResource(String path, boolean replace) throws IOException, SQLBansException {
+        Util.nullCheck(path, "Resource path");
         InputStream input = null;
         OutputStream output = null;
         try {
@@ -323,11 +417,28 @@ public final class SQLBans {
         }
     }
 
+    /**
+     * Send a message to all Players with a permission
+     * 
+     * @param permission
+     *            Permission to check against
+     * @param message
+     *            Message to send
+     */
     public void sendMessage(Perm permission, String message) {
+        Util.nullCheck(permission, "Permission");
+        Util.nullCheck(message, "Message");
         this.implementation.sendMessage(permission, message);
     }
 
+    /**
+     * Unban an IP address
+     * 
+     * @param address
+     *            InetAddress to unban
+     */
     public void unbanIP(final InetAddress address) {
+        Util.nullCheck(address, "IP Address");
         this.getScheduler().run(new Runnable() {
             @Override
             public void run() {
@@ -342,7 +453,14 @@ public final class SQLBans {
         });
     }
 
+    /**
+     * Unban a username
+     * 
+     * @param name
+     *            Username to unban
+     */
     public void unbanName(final String name) {
+        Util.nullCheck(name, "Username");
         this.getScheduler().run(new Runnable() {
             @Override
             public void run() {
@@ -359,6 +477,10 @@ public final class SQLBans {
 
     BanCache getBanCache() {
         return this.banCache;
+    }
+
+    File getDataFolder() {
+        return this.implementation.getDataFolder();
     }
 
     SQLHandler getSQL() {
