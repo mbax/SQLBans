@@ -36,19 +36,19 @@ public final class BanCache {
         this.plugin = plugin;
     }
 
-    public boolean containsIP(InetAddress ip) {
+    boolean containsIP(InetAddress ip) {
         return this.ips.contains(ip);
     }
 
-    public boolean containsName(String name) {
+    boolean containsName(String name) {
         return this.names.contains(name.toLowerCase());
     }
 
-    public void removeIP(InetAddress ip) {
+    void removeIP(InetAddress ip) {
         this.ips.remove(ip);
     }
 
-    public void removeName(String name) {
+    void removeName(String name) {
         this.names.remove(name.toLowerCase());
     }
 

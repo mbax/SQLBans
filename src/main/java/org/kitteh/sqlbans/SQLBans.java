@@ -189,10 +189,6 @@ public final class SQLBans {
         });
     }
 
-    public BanCache getBanCache() {
-        return this.banCache;
-    }
-
     public File getDataFolder() {
         return this.implementation.getDataFolder();
     }
@@ -353,6 +349,10 @@ public final class SQLBans {
                 }
             }
         });
+    }
+
+    BanCache getBanCache() {
+        return this.banCache;
     }
 
     SQLHandler getSQL() {
