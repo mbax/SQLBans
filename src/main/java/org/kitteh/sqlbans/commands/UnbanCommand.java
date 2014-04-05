@@ -19,9 +19,6 @@
  */
 package org.kitteh.sqlbans.commands;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLBans.Messages;
@@ -29,6 +26,9 @@ import org.kitteh.sqlbans.Util;
 import org.kitteh.sqlbans.api.CommandSender;
 import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansCommand;
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 public final class UnbanCommand extends SQLBansCommand {
 

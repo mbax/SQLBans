@@ -19,13 +19,13 @@
  */
 package org.kitteh.sqlbans;
 
+import org.yaml.snakeyaml.Yaml;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Level;
-
-import org.yaml.snakeyaml.Yaml;
 
 @SuppressWarnings("unchecked")
 final class Config {

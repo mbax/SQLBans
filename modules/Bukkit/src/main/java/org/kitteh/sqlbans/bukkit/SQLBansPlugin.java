@@ -1,10 +1,5 @@
 package org.kitteh.sqlbans.bukkit;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
@@ -16,6 +11,11 @@ import org.kitteh.sqlbans.api.Player;
 import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.api.SQLBansImplementation;
 import org.kitteh.sqlbans.api.Scheduler;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public final class SQLBansPlugin extends JavaPlugin implements SQLBansImplementation, Listener {
 

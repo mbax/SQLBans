@@ -19,16 +19,16 @@
  */
 package org.kitteh.sqlbans.api;
 
+import org.kitteh.sqlbans.Perm;
+
 import java.io.File;
 import java.util.logging.Logger;
-
-import org.kitteh.sqlbans.Perm;
 
 public interface SQLBansImplementation {
 
     /**
      * Get this implementation's Scheduler
-     * 
+     *
      * @return
      */
     public Scheduler getScheduler();
@@ -41,19 +41,16 @@ public interface SQLBansImplementation {
 
     /**
      * Send all players with a specified permission node a message
-     * 
-     * @param permission
-     *            Permission to check
-     * @param message
-     *            Message to send
+     *
+     * @param permission Permission to check
+     * @param message Message to send
      */
     public void sendMessage(final Perm permission, final String message);
 
     /**
      * Handle implementation-side registration of commands
-     * 
-     * @param command
-     *            Command to register
+     *
+     * @param command Command to register
      */
     public void registerCommand(SQLBansCommand command);
 
@@ -64,37 +61,36 @@ public interface SQLBansImplementation {
 
     /**
      * Get the implementation's Logger
-     * 
+     *
      * @return a Logger to use
      */
     public Logger getLogger();
 
     /**
      * Get the data folder for saving files
-     * 
+     *
      * @return the implementation's data folder
      */
     public File getDataFolder();
 
     /**
      * Get the current SQLBans version, as stored in the implementation's files
-     * 
+     *
      * @return the current SQLBans version
      */
     public String getVersion();
 
     /**
      * Get a Player by name
-     * 
-     * @param name
-     *            Name of the player
+     *
+     * @param name Name of the player
      * @return a Player or null if not found
      */
     public Player getPlayer(String name);
 
     /**
      * Get the currently online Players
-     * 
+     *
      * @return array of Player currently online
      */
     public Player[] getOnlinePlayers();

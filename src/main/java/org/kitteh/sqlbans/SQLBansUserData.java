@@ -19,9 +19,9 @@
  */
 package org.kitteh.sqlbans;
 
-import java.net.InetAddress;
-
 import org.kitteh.sqlbans.api.UserData;
+
+import java.net.InetAddress;
 
 /**
  * Default UserData implementation. Methods have no immediate effect.

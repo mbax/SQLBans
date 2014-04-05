@@ -40,7 +40,7 @@ public abstract class SQLBansCommand {
     /**
      * Get potential aliases of the command
      * Can be null/empty for no aliases
-     * 
+     *
      * @return an array of potential aliases
      */
     public String[] getAliases() {
@@ -49,7 +49,7 @@ public abstract class SQLBansCommand {
 
     /**
      * Get the primary name of the command
-     * 
+     *
      * @return the primary name
      */
     public String getName() {
@@ -59,7 +59,7 @@ public abstract class SQLBansCommand {
     /**
      * Get the permission required to call the command
      * Can be null if no permission required
-     * 
+     *
      * @return the permission required
      */
     public Perm getPermission() {
@@ -68,11 +68,9 @@ public abstract class SQLBansCommand {
 
     /**
      * Process the command
-     * 
-     * @param sender
-     *            Command sender
-     * @param args
-     *            Arguments sent in the command
+     *
+     * @param sender Command sender
+     * @param args Arguments sent in the command
      * @return true if processed
      */
     public boolean processCommand(CommandSender sender, String[] args) {

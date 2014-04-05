@@ -1,9 +1,9 @@
 package org.kitteh.sqlbans.bungeecord;
 
+import org.kitteh.sqlbans.api.Scheduler;
+
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.kitteh.sqlbans.api.Scheduler;
 
 public final class BungeeScheduler implements Scheduler {
 

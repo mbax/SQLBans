@@ -1,13 +1,11 @@
 package org.kitteh.sqlbans.bungeecord;
 
-import java.util.logging.Logger;
-
+import com.google.common.eventbus.Subscribe;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
-
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.SQLBans;
 import org.kitteh.sqlbans.SQLBansUserData;
@@ -16,7 +14,7 @@ import org.kitteh.sqlbans.api.SQLBansCommand;
 import org.kitteh.sqlbans.api.SQLBansImplementation;
 import org.kitteh.sqlbans.api.Scheduler;
 
-import com.google.common.eventbus.Subscribe;
+import java.util.logging.Logger;
 
 public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImplementation {
 

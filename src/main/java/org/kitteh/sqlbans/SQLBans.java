@@ -19,6 +19,16 @@
  */
 package org.kitteh.sqlbans;
 
+import org.kitteh.sqlbans.api.Player;
+import org.kitteh.sqlbans.api.SQLBansImplementation;
+import org.kitteh.sqlbans.api.Scheduler;
+import org.kitteh.sqlbans.api.UserData;
+import org.kitteh.sqlbans.commands.BanCommand;
+import org.kitteh.sqlbans.commands.KickCommand;
+import org.kitteh.sqlbans.commands.ReloadCommand;
+import org.kitteh.sqlbans.commands.UnbanCommand;
+import org.kitteh.sqlbans.exceptions.SQLBansException;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,16 +41,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.kitteh.sqlbans.api.Player;
-import org.kitteh.sqlbans.api.SQLBansImplementation;
-import org.kitteh.sqlbans.api.Scheduler;
-import org.kitteh.sqlbans.api.UserData;
-import org.kitteh.sqlbans.commands.BanCommand;
-import org.kitteh.sqlbans.commands.KickCommand;
-import org.kitteh.sqlbans.commands.ReloadCommand;
-import org.kitteh.sqlbans.commands.UnbanCommand;
-import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public final class SQLBans {
 
@@ -142,7 +142,7 @@ public final class SQLBans {
     /**
      * If you start me up, I'll never stop
      * But really, please only initialize me once.
-     * 
+     *
      * @param implementation
      */
     public SQLBans(SQLBansImplementation implementation) {
@@ -167,13 +167,10 @@ public final class SQLBans {
 
     /**
      * Ban an IP address.
-     * 
-     * @param address
-     *            InetAddress to ban
-     * @param reason
-     *            Reason for the ban
-     * @param admin
-     *            Who banned the user. 16 character limit
+     *
+     * @param address InetAddress to ban
+     * @param reason Reason for the ban
+     * @param admin Who banned the user. 16 character limit
      */
     public void banIP(final InetAddress address, final String reason, final String admin) {
         Util.nullCheck(address, "IP Address");
@@ -195,13 +192,10 @@ public final class SQLBans {
 
     /**
      * Ban a username.
-     * 
-     * @param name
-     *            Username to ban
-     * @param reason
-     *            Reason for the ban
-     * @param admin
-     *            Who banned the user. 16 character limit
+     *
+     * @param name Username to ban
+     * @param reason Reason for the ban
+     * @param admin Who banned the user. 16 character limit
      */
     public void banName(final String name, final String reason, final String admin) {
         Util.nullCheck(name, "Username");
@@ -223,7 +217,7 @@ public final class SQLBans {
 
     /**
      * Get the Logger
-     * 
+     *
      * @return the current implementation's logger
      */
     public Logger getLogger() {
@@ -232,7 +226,7 @@ public final class SQLBans {
 
     /**
      * Get an array of online players
-     * 
+     *
      * @return online Players from the implementation
      */
     public Player[] getOnlinePlayers() {
@@ -241,9 +235,8 @@ public final class SQLBans {
 
     /**
      * Get a Player by name
-     * 
-     * @param name
-     *            Username queried
+     *
+     * @param name Username queried
      * @return Player from the implementation
      */
     public Player getPlayer(String name) {
@@ -253,12 +246,10 @@ public final class SQLBans {
 
     /**
      * Get an InputStream of a file by path
-     * 
-     * @param path
-     *            Path to the file
+     *
+     * @param path Path to the file
      * @return InputStream for the file or null if not found
-     * @throws IOException
-     *             If something goes terribly wrong
+     * @throws IOException If something goes terribly wrong
      */
     public InputStream getResource(String path) throws IOException {
         Util.nullCheck(path, "Resource path");
@@ -273,7 +264,7 @@ public final class SQLBans {
 
     /**
      * Get the Scheduler
-     * 
+     *
      * @return the implementation's scheduler
      */
     public Scheduler getScheduler() {
@@ -282,7 +273,7 @@ public final class SQLBans {
 
     /**
      * Get the current server name as defined in config
-     * 
+     *
      * @return the current server name
      */
     public String getServerName() {
@@ -291,7 +282,7 @@ public final class SQLBans {
 
     /**
      * Get the current SQLBans version
-     * 
+     *
      * @return the implementation's stored version
      */
     public String getVersion() {
@@ -301,11 +292,9 @@ public final class SQLBans {
     /**
      * Process if a user may join the server, by username and IP
      * Sets the Result of the UserData and a disconnect reason
-     * 
-     * @param data
-     *            UserData which will be processed
-     * @param isJoin
-     *            Set to true to indicate this is an actual join attempt, to log the username/IP
+     *
+     * @param data UserData which will be processed
+     * @param isJoin Set to true to indicate this is an actual join attempt, to log the username/IP
      */
     public void processUserData(UserData data, boolean isJoin) {
         Util.nullCheck(data, "UserData");
@@ -334,7 +323,7 @@ public final class SQLBans {
     /**
      * Reload configuration and restart SQL connection
      * Called on startup and in reload command
-     * 
+     *
      * @throws SQLBansException
      */
     public void reload() throws SQLBansException {
@@ -372,15 +361,11 @@ public final class SQLBans {
 
     /**
      * Save a resource to the plugin folder, by path
-     * 
-     * @param path
-     *            Path to the local resource
-     * @param replace
-     *            If true, overwrite on save
-     * @throws IOException
-     *             If something goes horribly wrong
-     * @throws SQLBansException
-     *             If the resource doesn't exist to begin with
+     *
+     * @param path Path to the local resource
+     * @param replace If true, overwrite on save
+     * @throws IOException If something goes horribly wrong
+     * @throws SQLBansException If the resource doesn't exist to begin with
      */
     public void saveResource(String path, boolean replace) throws IOException, SQLBansException {
         Util.nullCheck(path, "Resource path");
@@ -419,11 +404,9 @@ public final class SQLBans {
 
     /**
      * Send a message to all Players with a permission
-     * 
-     * @param permission
-     *            Permission to check against
-     * @param message
-     *            Message to send
+     *
+     * @param permission Permission to check against
+     * @param message Message to send
      */
     public void sendMessage(Perm permission, String message) {
         Util.nullCheck(permission, "Permission");
@@ -433,9 +416,8 @@ public final class SQLBans {
 
     /**
      * Unban an IP address
-     * 
-     * @param address
-     *            InetAddress to unban
+     *
+     * @param address InetAddress to unban
      */
     public void unbanIP(final InetAddress address) {
         Util.nullCheck(address, "IP Address");
@@ -455,9 +437,8 @@ public final class SQLBans {
 
     /**
      * Unban a username
-     * 
-     * @param name
-     *            Username to unban
+     *
+     * @param name Username to unban
      */
     public void unbanName(final String name) {
         Util.nullCheck(name, "Username");

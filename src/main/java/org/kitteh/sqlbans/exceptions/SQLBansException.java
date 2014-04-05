@@ -28,9 +28,8 @@ public final class SQLBansException extends Exception {
 
     /**
      * Something has gone wrong with a message
-     * 
-     * @param string
-     *            Message
+     *
+     * @param string Message
      */
     public SQLBansException(String string) {
         super(string);
@@ -38,11 +37,9 @@ public final class SQLBansException extends Exception {
 
     /**
      * Something has gone wrong with message and a throwable
-     * 
-     * @param string
-     *            Message
-     * @param throwable
-     *            Further wrongness
+     *
+     * @param string Message
+     * @param throwable Further wrongness
      */
     public SQLBansException(String string, Throwable throwable) {
         super(string, throwable);

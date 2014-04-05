@@ -19,6 +19,10 @@
  */
 package org.kitteh.sqlbans;
 
+import org.kitteh.sqlbans.BackupTask.BanItem;
+import org.kitteh.sqlbans.SQLManager.SQLConnection;
+import org.kitteh.sqlbans.exceptions.SQLBansException;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.PreparedStatement;
@@ -28,10 +32,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.kitteh.sqlbans.BackupTask.BanItem;
-import org.kitteh.sqlbans.SQLManager.SQLConnection;
-import org.kitteh.sqlbans.exceptions.SQLBansException;
 
 public final class SQLHandler {
 

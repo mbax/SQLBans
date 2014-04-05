@@ -26,7 +26,7 @@ public final class Util {
 
     /**
      * Check if the submitted String is a valid IP address
-     * 
+     *
      * @param string
      * @return
      */
@@ -50,11 +50,9 @@ public final class Util {
 
     /**
      * If null, throw IllegalArgumentException (*name* may not be null)
-     * 
-     * @param check
-     *            Object to check
-     * @param name
-     *            Name of the object
+     *
+     * @param check Object to check
+     * @param name Name of the object
      */
     public static void nullCheck(Object check, String name) {
         if (check == null) {
@@ -64,11 +62,9 @@ public final class Util {
 
     /**
      * Combine String array with separator
-     * 
-     * @param args
-     *            String array
-     * @param separator
-     *            Separator
+     *
+     * @param args String array
+     * @param separator Separator
      * @return combined String
      */
     public static String separatistsUnite(String[] args, String separator) {
@@ -77,13 +73,10 @@ public final class Util {
 
     /**
      * Combine String array with separator, starting at defined index
-     * 
-     * @param args
-     *            String array
-     * @param separator
-     *            Separator
-     * @param start
-     *            Starting index
+     *
+     * @param args String array
+     * @param separator Separator
+     * @param start Starting index
      * @return combined String
      */
     public static String separatistsUnite(String[] args, String separator, int start) {
@@ -92,15 +85,11 @@ public final class Util {
 
     /**
      * Combine String array with separator, starting and ending at defined indices
-     * 
-     * @param args
-     *            String array
-     * @param separator
-     *            Separator
-     * @param start
-     *            Starting index
-     * @param end
-     *            Ending index
+     *
+     * @param args String array
+     * @param separator Separator
+     * @param start Starting index
+     * @param end Ending index
      * @return combined String
      */
     public static String separatistsUnite(String[] args, String separator, int start, int end) {

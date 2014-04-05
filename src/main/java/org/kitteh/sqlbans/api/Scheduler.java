@@ -29,31 +29,25 @@ public interface Scheduler {
 
     /**
      * Schedule a task to run after a specified delay
-     * 
-     * @param runnable
-     *            Runnable to execute
-     * @param delay
-     *            Seconds to delay execution
+     *
+     * @param runnable Runnable to execute
+     * @param delay Seconds to delay execution
      */
     void delayedTask(Runnable runnable, int delay);
 
     /**
      * Schedule a task to run after a specified delay and then repeat on a specified period
-     * 
-     * @param runnable
-     *            Runnable to execute
-     * @param delay
-     *            Seconds to delay first execution
-     * @param period
-     *            Seconds to delay between subsequent executions
+     *
+     * @param runnable Runnable to execute
+     * @param delay Seconds to delay first execution
+     * @param period Seconds to delay between subsequent executions
      */
     void repeatingTask(Runnable runnable, int delay, int period);
 
     /**
      * Schedule a task to run immediately
-     * 
-     * @param runnable
-     *            Runnable to execute
+     *
+     * @param runnable Runnable to execute
      */
     void run(Runnable runnable);
 }

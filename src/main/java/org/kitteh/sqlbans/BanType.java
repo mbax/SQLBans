@@ -43,7 +43,7 @@ public enum BanType {
 
     /**
      * Get the internal int ID of the ban type, used in SQL
-     * 
+     *
      * @return the internal ban type ID
      */
     public int getID() {
