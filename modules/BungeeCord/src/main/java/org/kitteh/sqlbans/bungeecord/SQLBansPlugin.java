@@ -18,6 +18,8 @@ package org.kitteh.sqlbans.bungeecord;
 
 import com.google.common.eventbus.Subscribe;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -78,7 +80,7 @@ public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImpl
 
     @Subscribe
     public void onLogin(LoginEvent event) {
-        final SQLBansUserData data = new SQLBansUserData(event.getConnection().getName(), event.getConnection().getAddress().getAddress());
+        final SQLBansUserData data = new SQLBansUserData(event.getConnection().getName(), event.getConnection().getUniqueId(), event.getConnection().getAddress().getAddress());
         this.sqlbans.processUserData(data, true);
         if (data.getResult() != SQLBansUserData.Result.UNCHANGED) {
             event.setCancelled(true);
@@ -98,9 +100,10 @@ public final class SQLBansPlugin extends Plugin implements Listener, SQLBansImpl
 
     @Override
     public void sendMessage(Perm permission, String message) {
+        BaseComponent[] mess = TextComponent.fromLegacyText(message);
         for (final ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
             if (player.hasPermission(permission.toString())) {
-                player.sendMessage(message);
+                player.sendMessage(mess);
             }
         }
     }

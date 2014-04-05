@@ -127,8 +127,7 @@ public final class SQLHandler {
             con = this.manager.getQueryConnection();
             final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `ip` = ? AND `isbanned` = 1");
             banQuery.setBytes(1, address.getAddress());
-            final boolean ret = !banQuery.executeQuery().first();
-            return ret;
+            return !banQuery.executeQuery().first();
         } finally {
             try {
                 con.myWorkHereIsDone();
@@ -143,8 +142,7 @@ public final class SQLHandler {
             con = this.manager.getQueryConnection();
             final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `username` = ? AND `isbanned` = 1");
             banQuery.setString(1, name);
-            final boolean ret = !banQuery.executeQuery().first();
-            return ret;
+            return !banQuery.executeQuery().first();
         } finally {
             try {
                 con.myWorkHereIsDone();

@@ -19,6 +19,7 @@ package org.kitteh.sqlbans;
 import org.kitteh.sqlbans.api.UserData;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 /**
  * Default UserData implementation. Methods have no immediate effect.
@@ -29,10 +30,12 @@ public final class SQLBansUserData implements UserData {
     private final String name;
     private final InetAddress ip;
     private String reason = null;
+    private UUID uuid;
 
-    public SQLBansUserData(String name, InetAddress ip) {
+    public SQLBansUserData(String name, UUID uuid, InetAddress ip) {
         this.name = name;
         this.ip = ip;
+        this.uuid = uuid;
     }
 
     @Override
@@ -59,5 +62,10 @@ public final class SQLBansUserData implements UserData {
     @Override
     public Result getResult() {
         return this.result;
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.uuid;
     }
 }

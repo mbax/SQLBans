@@ -19,6 +19,8 @@ package org.kitteh.sqlbans.bukkit;
 import org.bukkit.entity.Player;
 import org.kitteh.sqlbans.Perm;
 
+import java.util.UUID;
+
 public final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
 
     private final Player player;
@@ -30,6 +32,11 @@ public final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
     @Override
     public String getName() {
         return this.player.getName();
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return player.getUniqueId();
     }
 
     @Override

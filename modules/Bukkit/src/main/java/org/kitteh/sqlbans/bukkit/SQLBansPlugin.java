@@ -67,16 +67,16 @@ public final class SQLBansPlugin extends JavaPlugin implements SQLBansImplementa
     @Override
     public void onEnable() {
         this.sqlbans = new SQLBans(this);
-        final Set<SQLBansUserData> attempts = new HashSet<SQLBansUserData>();
+        final Set<SQLBansUserData> attempts = new HashSet<>();
         for (final org.bukkit.entity.Player player : this.getServer().getOnlinePlayers()) {
-            final SQLBansUserData attempt = new SQLBansUserData(player.getName(), player.getAddress().getAddress());
+            final SQLBansUserData attempt = new SQLBansUserData(player.getName(), player.getUniqueId(), player.getAddress().getAddress());
             attempts.add(attempt);
         }
         if (!attempts.isEmpty()) {
             this.getServer().getScheduler().runTaskAsynchronously(this, new Runnable() {
                 @Override
                 public void run() {
-                    final Map<String, String> kick = new HashMap<String, String>();
+                    final Map<String, String> kick = new HashMap<>();
                     for (final SQLBansUserData attempt : attempts) {
                         SQLBansPlugin.this.sqlbans.processUserData(attempt, false);
                         if (attempt.getResult() != SQLBansUserData.Result.UNCHANGED) {
@@ -104,7 +104,7 @@ public final class SQLBansPlugin extends JavaPlugin implements SQLBansImplementa
 
     @EventHandler
     public void onLogin(AsyncPlayerPreLoginEvent event) {
-        final SQLBansUserData data = new SQLBansUserData(event.getName(), event.getAddress());
+        final SQLBansUserData data = new SQLBansUserData(event.getName(), event.getUniqueId(), event.getAddress());
         this.sqlbans.processUserData(data, true);
         if (data.getResult() != SQLBansUserData.Result.UNCHANGED) {
             AsyncPlayerPreLoginEvent.Result result;

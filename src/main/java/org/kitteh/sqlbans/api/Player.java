@@ -16,6 +16,8 @@
  */
 package org.kitteh.sqlbans.api;
 
+import java.util.UUID;
+
 /**
  * A Player
  */
@@ -27,4 +29,11 @@ public interface Player extends CommandSender {
      * @param reason Reason to send when kicking
      */
     public void kick(String reason);
+
+    /**
+     * Gets the UUID of the Player.
+     *
+     * @return player's UUID
+     */
+    public UUID getUniqueId();
 }

@@ -20,6 +20,8 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.api.Player;
 
+import java.util.UUID;
+
 public final class BungeePlayer implements Player {
 
     private final ProxiedPlayer player;
@@ -31,6 +33,11 @@ public final class BungeePlayer implements Player {
     @Override
     public String getName() {
         return this.player.getName();
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        return this.player.getUniqueId();
     }
 
     @Override

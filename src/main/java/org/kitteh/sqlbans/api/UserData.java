@@ -17,6 +17,7 @@
 package org.kitteh.sqlbans.api;
 
 import java.net.InetAddress;
+import java.util.UUID;
 
 /**
  * Class for tracking a user's ability to join
@@ -73,4 +74,11 @@ public interface UserData {
      * @return Result of the attempt
      */
     public Result getResult();
+
+    /**
+     * Gets the player's UUID
+     *
+     * @return player's unique ID
+     */
+    UUID getUniqueId();
 }
