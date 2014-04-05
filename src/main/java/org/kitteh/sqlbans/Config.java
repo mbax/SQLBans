@@ -38,9 +38,8 @@ final class Config {
                 plugin.getLogger().log(Level.WARNING, "Could not save default config", e);
             }
         }
-        final Yaml yaml = new Yaml();
         try {
-            this.map = (Map<String, Object>) yaml.load(new FileInputStream(configFile));
+            this.map = (Map<String, Object>) new Yaml().load(new FileInputStream(configFile));
         } catch (final Exception e) {
             e.printStackTrace();
         }
@@ -81,7 +80,7 @@ final class Config {
 
     private Object get(String string, Map<String, Object> map) {
         if (string.contains(".") && (string.indexOf(".") != (string.length() - 1))) {
-            final Object o = map.get(string.subSequence(0, string.indexOf(".")));
+            final Object o = map.get(string.substring(0, string.indexOf(".")));
             if (o instanceof Map) {
                 return this.get(string.substring(string.indexOf(".") + 1), (Map<String, Object>) o);
             } else {

@@ -57,8 +57,7 @@ public final class SQLHandler {
         } catch (final Exception e) {
             throw new SQLBansException("SQL connection failure!", e);
         }
-        try {
-            final SQLConnection con = this.manager.getQueryConnection();
+        try (final SQLConnection con = this.manager.getQueryConnection()){
             final ResultSet bansExists = con.getConnection().getMetaData().getTables(null, null, this.banTableName, null);
             final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, this.logTableName, null);
             if (!bansExists.first() || !logsExists.first()) {
@@ -70,19 +69,16 @@ public final class SQLHandler {
                         }
                     }
                 } else {
-                    new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
+                    throw new SQLBansException("You will need to create the tables manually. Import create.sql from this plugin jar file.");
                 }
             }
-            con.myWorkHereIsDone();
         } catch (final SQLException e) {
             throw new SQLBansException("Failure while checking for table!", e);
         }
     }
 
-    void ban(InetAddress ip, String reason, String admin) throws SQLBansException, SQLException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getUpdateConnection();
+    void ban(InetAddress ip, String reason, String admin) throws SQLException {
+        try (SQLConnection con = this.manager.getUpdateConnection()) {
             final BanType type = BanType.IP;
             final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.banTableName + "` (`ip`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
             statement.setBytes(1, ip.getAddress());
@@ -92,18 +88,11 @@ public final class SQLHandler {
             statement.setTimestamp(5, new Timestamp(new Date().getTime()));
             statement.setString(6, this.plugin.getServerName());
             statement.executeUpdate();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    void ban(String user, String reason, String admin) throws SQLBansException, SQLException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getUpdateConnection();
+    void ban(String user, String reason, String admin) throws SQLException {
+        try (SQLConnection con = this.manager.getUpdateConnection()) {
             final BanType type = BanType.NAME;
             final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.banTableName + "` (`username`, `type`, `reason`, `admin`, `timestamp`, `server`) VALUES (?, ?, ?, ?, ?, ?)");
             statement.setString(1, user);
@@ -113,48 +102,27 @@ public final class SQLHandler {
             statement.setTimestamp(5, new Timestamp(new Date().getTime()));
             statement.setString(6, this.plugin.getServerName());
             statement.executeUpdate();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    boolean canJoin(InetAddress address) throws SQLBansException, SQLException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getQueryConnection();
+    boolean canJoin(InetAddress address) throws SQLException {
+        try (SQLConnection con = this.manager.getQueryConnection()) {
             final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `ip` = ? AND `isbanned` = 1");
             banQuery.setBytes(1, address.getAddress());
             return !banQuery.executeQuery().first();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    boolean canJoin(String name) throws SQLBansException, SQLException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getQueryConnection();
+    boolean canJoin(String name) throws SQLException {
+        try (SQLConnection con = this.manager.getQueryConnection()) {
             final PreparedStatement banQuery = con.getConnection().prepareStatement("SELECT `id` FROM `" + this.banTableName + "` WHERE `username` = ? AND `isbanned` = 1");
             banQuery.setString(1, name);
             return !banQuery.executeQuery().first();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    Set<BanItem> getAllBans(BanType type) throws SQLException, SQLBansException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getQueryConnection();
+    Set<BanItem> getAllBans(BanType type) throws SQLException {
+        try (SQLConnection con = this.manager.getQueryConnection()) {
             final Set<BanItem> list = new HashSet<BanItem>();
             final PreparedStatement statement = con.getConnection().prepareStatement("SELECT `" + (type == BanType.NAME ? "username" : "ip") + "`,`reason`,`admin`,`timestamp`,`banlength` FROM `" + this.banTableName + "` WHERE `type` = ? AND `isbanned` = 1");
             statement.setInt(1, type.getID());
@@ -174,58 +142,32 @@ public final class SQLHandler {
                 list.add(new BanItem(name, result.getString("admin"), result.getTimestamp("timestamp"), result.getInt("banlength"), result.getString("reason")));
             }
             return list;
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    void logJoin(String name, InetAddress address) throws SQLException, SQLBansException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getUpdateConnection();
+    void logJoin(String name, InetAddress address) throws SQLException {
+        try (SQLConnection con = this.manager.getUpdateConnection()) {
             final PreparedStatement statement = con.getConnection().prepareStatement("INSERT INTO `" + this.logTableName + "` (`username`,`ip`,`server`) VALUES (?,?,?);");
             statement.setString(1, name);
             statement.setBytes(2, address.getAddress());
             statement.setString(3, this.plugin.getServerName());
             statement.executeUpdate();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    void unban(InetAddress address) throws SQLException, SQLBansException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getUpdateConnection();
+    void unban(InetAddress address) throws SQLException {
+        try (SQLConnection con = this.manager.getUpdateConnection()) {
             final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + this.banTableName + "` SET `isbanned` = 0 WHERE `ip` = ?");
             statement.setBytes(1, address.getAddress());
             statement.executeUpdate();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 
-    void unban(String user) throws SQLBansException, SQLException {
-        SQLConnection con = null;
-        try {
-            con = this.manager.getUpdateConnection();
+    void unban(String user) throws SQLException {
+        try (SQLConnection con = this.manager.getUpdateConnection()) {
             final PreparedStatement statement = con.getConnection().prepareStatement("UPDATE `" + this.banTableName + "` SET `isbanned` = 0 WHERE `username` = ?");
             statement.setString(1, user);
             statement.executeUpdate();
-        } finally {
-            try {
-                con.myWorkHereIsDone();
-            } catch (final Exception e) {
-            }
         }
     }
 }

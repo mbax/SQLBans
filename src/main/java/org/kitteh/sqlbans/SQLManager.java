@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 final class SQLManager {
 
-    final class SQLConnection {
+    final class SQLConnection implements AutoCloseable {
 
         private Connection connection;
         private final String url;
@@ -37,11 +37,11 @@ final class SQLManager {
             return this.connection;
         }
 
-        boolean inUse() {
+        private boolean inUse() {
             return this.inUse;
         }
 
-        void myTurn() throws SQLException {
+        private void myTurn() throws SQLException {
             if (this.connection.isValid(1)) {
                 this.connection.close();
                 this.connection = DriverManager.getConnection(this.url);
@@ -49,11 +49,17 @@ final class SQLManager {
             this.inUse = true;
         }
 
-        void myWorkHereIsDone() {
+        /**
+         * Note: THIS DOES NOT CLOSE THE ACTUAL CONNECTION.
+         * <p />
+         * Purely used for marking it as no longer in use.
+         */
+        @Override
+        public void close() {
             this.inUse = false;
         }
 
-        void reset() throws SQLException {
+        private void reset() throws SQLException {
             try {
                 this.connection.close();
             } catch (final SQLException e) {
