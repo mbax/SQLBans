@@ -131,7 +131,6 @@ public final class SQLBans {
     }
 
     private final BanCache banCache = new BanCache(this);
-    private Config config;
     private final SQLBansImplementation implementation;
     private String serverName;
     private SQLHandler sql;
@@ -140,7 +139,7 @@ public final class SQLBans {
      * If you start me up, I'll never stop
      * But really, please only initialize me once.
      *
-     * @param implementation
+     * @param implementation the implementation in use
      */
     public SQLBans(SQLBansImplementation implementation) {
         this.implementation = implementation;
@@ -248,7 +247,7 @@ public final class SQLBans {
      * @return InputStream for the file or null if not found
      * @throws IOException If something goes terribly wrong
      */
-    public InputStream getResource(String path) throws IOException {
+    InputStream getResource(String path) throws IOException {
         Util.nullCheck(path, "Resource path");
         final URL url = this.getClass().getClassLoader().getResource(path);
         if (url == null) {
@@ -324,16 +323,16 @@ public final class SQLBans {
      * @throws SQLBansException
      */
     public void reload() throws SQLBansException {
-        this.config = new Config(this);
-        SQLBans.Messages.load(this.config);
-        this.serverName = this.config.getString("server-name");
-        final String host = this.config.getString("database.host");
-        final int port = this.config.getInt("database.port");
-        final String db = this.config.getString("database.database");
-        final String user = this.config.getString("database.auth.username");
-        final String pass = this.config.getString("database.auth.password");
-        final String bansTableName = this.config.getString("database.tablenames.bans", "SQLBans_bans");
-        final String logTableName = this.config.getString("database.tablenames.log", "SQLBans_log");
+        Config config = new Config(this);
+        SQLBans.Messages.load(config);
+        this.serverName = config.getString("server-name");
+        final String host = config.getString("database.host");
+        final int port = config.getInt("database.port");
+        final String db = config.getString("database.database");
+        final String user = config.getString("database.auth.username");
+        final String pass = config.getString("database.auth.password");
+        final String bansTableName = config.getString("database.tablenames.bans", "SQLBans_bans");
+        final String logTableName = config.getString("database.tablenames.log", "SQLBans_log");
 
         String tableCreate = null;
         final StringBuilder builder = new StringBuilder();

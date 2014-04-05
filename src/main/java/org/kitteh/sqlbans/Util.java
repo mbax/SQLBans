@@ -24,8 +24,8 @@ public final class Util {
     /**
      * Check if the submitted String is a valid IP address
      *
-     * @param string
-     * @return
+     * @param string possibly an IP
+     * @return true if its an IP
      */
     public static boolean isIP(String string) {
         final String[] split = string.split("\\.");

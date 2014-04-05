@@ -27,7 +27,7 @@ import java.util.logging.Level;
 @SuppressWarnings("unchecked")
 final class Config {
 
-    private Map<String, Object> map = new LinkedHashMap<String, Object>();
+    private Map<String, Object> map = new LinkedHashMap<>();
 
     Config(SQLBans plugin) {
         final File configFile = new File(plugin.getDataFolder(), "config.yml");
@@ -45,7 +45,7 @@ final class Config {
         }
     }
 
-    public Object get(String string) {
+    Object get(String string) {
         try {
             return this.get(string, this.map);
         } catch (final Exception e) {

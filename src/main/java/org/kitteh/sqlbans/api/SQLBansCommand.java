@@ -28,7 +28,7 @@ public abstract class SQLBansCommand {
     private final String name;
     private final Perm permission;
 
-    public SQLBansCommand(String commandName, Perm permission, String... aliases) {
+    protected SQLBansCommand(String commandName, Perm permission, String... aliases) {
         this.name = commandName;
         this.permission = permission;
         this.aliases = aliases;

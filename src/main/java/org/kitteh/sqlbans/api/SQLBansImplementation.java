@@ -26,7 +26,7 @@ public interface SQLBansImplementation {
     /**
      * Get this implementation's Scheduler
      *
-     * @return
+     * @return the scheduler
      */
     public Scheduler getScheduler();
 

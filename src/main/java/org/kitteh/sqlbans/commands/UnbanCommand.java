@@ -29,7 +29,7 @@ import java.net.UnknownHostException;
 
 public final class UnbanCommand extends SQLBansCommand {
 
-    public SQLBans plugin;
+    private final SQLBans plugin;
 
     public UnbanCommand(SQLBans plugin) {
         super("unban", Perm.COMMAND_UNBAN);

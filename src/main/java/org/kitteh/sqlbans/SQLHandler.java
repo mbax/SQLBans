@@ -30,7 +30,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class SQLHandler {
+final class SQLHandler {
 
     private String banTableName;
     private String logTableName;
@@ -123,7 +123,7 @@ public final class SQLHandler {
 
     Set<BanItem> getAllBans(BanType type) throws SQLException {
         try (SQLConnection con = this.manager.getQueryConnection()) {
-            final Set<BanItem> list = new HashSet<BanItem>();
+            final Set<BanItem> list = new HashSet<>();
             final PreparedStatement statement = con.getConnection().prepareStatement("SELECT `" + (type == BanType.NAME ? "username" : "ip") + "`,`reason`,`admin`,`timestamp`,`banlength` FROM `" + this.banTableName + "` WHERE `type` = ? AND `isbanned` = 1");
             statement.setInt(1, type.getID());
             final ResultSet result = statement.executeQuery();

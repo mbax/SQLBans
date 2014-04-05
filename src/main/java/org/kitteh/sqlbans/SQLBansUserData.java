@@ -30,7 +30,7 @@ public final class SQLBansUserData implements UserData {
     private final String name;
     private final InetAddress ip;
     private String reason = null;
-    private UUID uuid;
+    private final UUID uuid;
 
     public SQLBansUserData(String name, UUID uuid, InetAddress ip) {
         this.name = name;

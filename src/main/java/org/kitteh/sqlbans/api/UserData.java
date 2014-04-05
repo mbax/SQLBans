@@ -36,7 +36,7 @@ public interface UserData {
         /**
          * Kicked because banned
          */
-        KICK_BANNED;
+        KICK_BANNED
     }
 
     /**
