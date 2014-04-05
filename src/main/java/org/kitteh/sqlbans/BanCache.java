@@ -1,9 +1,6 @@
 /*
  * SQLBans
- * Copyright 2012 Matt Baxter
- *
- * Google Gson
- * Copyright 2008-2011 Google Inc.
+ * Copyright 2012-2014 Matt Baxter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
