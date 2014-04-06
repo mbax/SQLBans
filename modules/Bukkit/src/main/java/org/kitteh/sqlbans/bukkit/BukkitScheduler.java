@@ -18,7 +18,7 @@ package org.kitteh.sqlbans.bukkit;
 
 import org.kitteh.sqlbans.api.Scheduler;
 
-public final class BukkitScheduler implements Scheduler {
+final class BukkitScheduler implements Scheduler {
 
     private final SQLBansPlugin plugin;
 

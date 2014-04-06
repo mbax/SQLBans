@@ -21,7 +21,7 @@ import org.kitteh.sqlbans.Perm;
 
 import java.util.UUID;
 
-public final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
+final class BukkitPlayer implements org.kitteh.sqlbans.api.Player {
 
     private final Player player;
 

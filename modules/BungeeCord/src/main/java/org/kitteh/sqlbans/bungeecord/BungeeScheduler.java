@@ -21,7 +21,7 @@ import org.kitteh.sqlbans.api.Scheduler;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public final class BungeeScheduler implements Scheduler {
+final class BungeeScheduler implements Scheduler {
 
     private final Timer timer = new Timer();
 

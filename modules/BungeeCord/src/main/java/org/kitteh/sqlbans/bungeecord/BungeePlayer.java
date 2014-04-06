@@ -16,13 +16,14 @@
  */
 package org.kitteh.sqlbans.bungeecord;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import org.kitteh.sqlbans.Perm;
 import org.kitteh.sqlbans.api.Player;
 
 import java.util.UUID;
 
-public final class BungeePlayer implements Player {
+final class BungeePlayer implements Player {
 
     private final ProxiedPlayer player;
 
@@ -47,11 +48,11 @@ public final class BungeePlayer implements Player {
 
     @Override
     public void kick(String reason) {
-        this.player.disconnect(reason);
+        this.player.disconnect(TextComponent.fromLegacyText(reason));
     }
 
     @Override
     public void sendMessage(String message) {
-        this.player.sendMessage(message);
+        this.player.sendMessage(TextComponent.fromLegacyText(message));
     }
 }
