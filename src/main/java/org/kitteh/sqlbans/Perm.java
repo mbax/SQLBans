@@ -43,8 +43,14 @@ public enum Perm {
     MESSAGE_UNBAN_NORMAL,
     MESSAGE_UNBAN_ADMIN;
 
+    private final String perm;
+
+    private Perm() {
+        this.perm = "sqlbans." + this.name().toLowerCase().replace("_", ".");
+    }
+
     @Override
     public String toString() {
-        return "sqlbans." + this.name().toLowerCase().replace("_", ".");
+        return this.perm;
     }
 }
