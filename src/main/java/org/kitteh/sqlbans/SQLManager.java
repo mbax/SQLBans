@@ -51,7 +51,7 @@ final class SQLManager {
 
         /**
          * Note: THIS DOES NOT CLOSE THE ACTUAL CONNECTION.
-         * <p />
+         * <p/>
          * Purely used for marking it as no longer in use.
          */
         @Override

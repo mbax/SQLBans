@@ -336,8 +336,7 @@ public final class SQLBans {
 
         String tableCreate = null;
         final StringBuilder builder = new StringBuilder();
-        try {
-            final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")));
+        try (final BufferedReader reader = new BufferedReader(new InputStreamReader(this.getResource("create.sql")))) {
             String next;
             while ((next = reader.readLine()) != null) {
                 builder.append(next);
@@ -365,10 +364,7 @@ public final class SQLBans {
      */
     public void saveResource(String path, boolean replace) throws IOException, SQLBansException {
         Util.nullCheck(path, "Resource path");
-        InputStream input = null;
-        OutputStream output = null;
-        try {
-            input = this.getResource(path);
+        try (InputStream input = this.getResource(path)) {
             if (input == null) {
                 throw new SQLBansException("Resource not found: " + path);
             }
@@ -377,24 +373,16 @@ public final class SQLBans {
             final File outputFolder = slashLocation >= 0 ? new File(this.getDataFolder(), path.substring(0, slashLocation)) : this.getDataFolder();
             outputFolder.mkdirs();
             if (replace || !outputFile.exists()) {
-                output = new FileOutputStream(outputFile);
-                final byte[] buf = new byte[1024];
-                int len;
-                while ((len = input.read(buf)) > 0) {
-                    output.write(buf, 0, len);
+                try (OutputStream output = new FileOutputStream(outputFile)) {
+                    final byte[] buf = new byte[1024];
+                    int len;
+                    while ((len = input.read(buf)) > 0) {
+                        output.write(buf, 0, len);
+                    }
                 }
             }
-        } finally {
-            try {
-                if (input != null) {
-                    input.close();
-                }
-                if (output != null) {
-                    output.close();
-                }
-            } catch (final IOException e) {
-                // Moot!
-            }
+        } catch (IOException e) {
+            // TODO complain
         }
     }
 

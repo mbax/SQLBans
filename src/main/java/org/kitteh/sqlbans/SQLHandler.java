@@ -57,7 +57,7 @@ final class SQLHandler {
         } catch (final Exception e) {
             throw new SQLBansException("SQL connection failure!", e);
         }
-        try (final SQLConnection con = this.manager.getQueryConnection()){
+        try (final SQLConnection con = this.manager.getQueryConnection()) {
             final ResultSet bansExists = con.getConnection().getMetaData().getTables(null, null, this.banTableName, null);
             final ResultSet logsExists = con.getConnection().getMetaData().getTables(null, null, this.logTableName, null);
             if (!bansExists.first() || !logsExists.first()) {

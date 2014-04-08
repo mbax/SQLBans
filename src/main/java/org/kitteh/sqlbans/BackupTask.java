@@ -82,9 +82,7 @@ final class BackupTask implements Runnable {
             if ((set == null) || set.isEmpty()) {
                 continue;
             }
-            try {
-                final PrintWriter writer = new PrintWriter(new FileWriter(new File(this.plugin.getDataFolder(), "backup-" + type + "s.txt"), false));
-
+            try (FileWriter w = new FileWriter(new File(this.plugin.getDataFolder(), "backup-" + type + "s.txt"), false); PrintWriter writer = new PrintWriter(w)) {
                 writer.println("# Updated " + (new SimpleDateFormat()).format(new Date()) + " by SQLBans " + this.plugin.getVersion());
                 writer.println("# victim name | ban date | banned by | banned until | reason");
                 writer.println();
@@ -107,7 +105,6 @@ final class BackupTask implements Runnable {
                     builder.append(item.getReason());
                     writer.println(builder.toString());
                 }
-                writer.close();
             } catch (final Exception e) {
                 this.plugin.getLogger().log(Level.SEVERE, "Could not save " + type + " ban list", e);
             }

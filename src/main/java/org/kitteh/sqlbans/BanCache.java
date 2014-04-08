@@ -17,17 +17,15 @@
 package org.kitteh.sqlbans;
 
 import java.net.InetAddress;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 final class BanCache {
 
     private final SQLBans plugin;
 
-    private final Set<String> names = Collections.synchronizedSet(new HashSet<String>());
-
-    private final Set<InetAddress> ips = Collections.synchronizedSet(new HashSet<InetAddress>());
+    private final Set<String> names = new CopyOnWriteArraySet<>();
+    private final Set<InetAddress> ips = new CopyOnWriteArraySet<>();
 
     BanCache(SQLBans plugin) {
         this.plugin = plugin;
