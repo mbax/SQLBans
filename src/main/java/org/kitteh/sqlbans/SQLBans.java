@@ -156,7 +156,8 @@ public final class SQLBans {
         this.implementation.registerCommand(new ReloadCommand(this));
         this.implementation.registerCommand(new UnbanCommand(this));
 
-        this.getScheduler().repeatingTask(new BackupTask(this), 5, 300);
+        // Backup disabled pending 1.7.6 changes
+        // this.getScheduler().repeatingTask(new BackupTask(this), 5, 300);
 
         this.implementation.registerLoginAttemptListening();
     }
